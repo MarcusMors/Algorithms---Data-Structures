@@ -1,3 +1,6 @@
+# generated data files
+data/GD*
+
 # helpers
 *helper*
 *aux*
