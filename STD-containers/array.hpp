@@ -20,20 +20,25 @@ using namespace std;
 
 namespace fstd
 {
-
+	// fixed sized array
 	template <typename T, size_t N>
 	struct array
 	{
-		array(std::initializer_list<T> t_arr)
+		using size_type = std::size_t;
+		// array(std::initializer_list<T> t_arr) : sz{t_arr.end() - t_arr.begin()}
+		array(std::initializer_list<T> init)
 		{
-			for (size_t i = 0; i < t_arr.size(); ++i)
+			for (size_t i = 0; i < init.size(); ++i)
 			{
-				arr[i] = *(t_arr.begin() + i);
+				arr[i] = *(init.begin() + i);
 			}
 		}
 		size_t size() const { return sz; }
-		T operator[](const size_t &i) { return arr[i]; }
-		T operator[](const size_t &i) const { return arr[i]; }
+		T &back() const { return arr[sz - 1]; }
+		T &operator[](const size_t &i) { return arr[i]; }
+		T &operator[](const size_t &i) const { return arr[i]; }
+		const T *begin() const { return arr; }
+		const T *end() const { return arr + sz; }
 
 	private:
 		const size_t sz = N;
@@ -43,13 +48,53 @@ namespace fstd
 	template <typename T, size_t N>
 	ostream &operator<<(std::ostream &os, const array<T, N> &t_arr)
 	{
-
-		for (size_t i = 0; i < t_arr.size(); i++)
-		{
-			os << t_arr[i] << ',';
-		}
-		// int i = 0;
-		// return os<< while(i != sz){};
+		for (const auto &e : t_arr)
+			os << e << ", ";
 		return os;
 	}
+
+	// heap array
+	// template <typename T>
+	// struct h_array
+	// {
+	// 	using size_type = std::size_t;
+	// 	h_array(std::initializer_list<T> t_arr)
+	// 	{
+	// 		arr = new T[t_arr.size()];
+	// 		for (auto i = t_arr.begin(); i < t_arr.end(); ++i)
+	// 			arr[i] = *(t_arr.begin());
+	// 	}
+	// 	h_array(h_array<T> &t_arr)
+	// 	{
+	// 		if (t_arr.size() > sz)
+	// 		{
+	// 		}
+
+	// 		for ()
+	// 		{
+	// 		}
+	// 	}
+
+	// 	size_type size() const { return sz; }
+	// 	T &back() const { return arr[sz - 1]; }
+	// 	T &operator[](const size_t &i) { return arr[i]; }
+	// 	T &operator[](const size_t &i) const { return arr[i]; }
+	// 	T *begin() { return arr; }
+	// 	T *begin() const { return arr; }
+	// 	T *end() { return arr + sz; }
+	// 	T *end() const { return arr + sz; }
+
+	// private:
+	// 	size_t sz;
+	// 	T *arr;
+	// };
+
+	// template <typename T, size_t N>
+	// ostream &operator<<(std::ostream &os, const h_array<T, N> &t_arr)
+	// {
+	// 	for (const auto &e : t_arr)
+	// 		os << t_arr << ", ";
+	// 	return os;
+	// }
+
 } // namespace fstd
