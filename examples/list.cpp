@@ -22,18 +22,26 @@ using namespace fstd;
 
 int main()
 {
-	fstd::list<int> list{1, 2, 3, 4, 5};
+	fstd::list<int> list{0, 1, 2, 3, 4, 5};
 	std::cout << "size\t: " << list.size() << '\n';
-	node<int> *ptr = list.begin();
-	cout << "ptr : " << ptr->value << endl;
-	++ptr;
-	// ptr = ptr->next;
-	cout << "ptr : " << ptr->value << endl;
+	std::cout << "list\t: " << list << std::endl;
 
-	// std::cout << "list\t: " << list << std::endl;
-	// std::cout << "list[0] : " << list[0] << '\n';
-	// std::cout << "list[1] : " << list[1] << '\n';
-	// std::cout << "list[2] : " << list[2] << '\n';
+	cout << "\nforward scripting" << endl;
+	for (size_t i = 0; i < list.size(); i++)
+		cout << "[" << i << "]" << list[i] << ", ";
+
+	cout << "\nbackward scripting" << endl;
+	for (size_t i = list.size(); i > 0; --i)
+		cout << "[" << i - 1 << "]" << list[i - 1] << ", ";
+
+	cout << "\nforward iteration" << endl;
+	for (auto *i = list.begin(); i != list.end(); i = i->next)
+		cout << i->value << ", ";
+
+	cout << "\nbackward scripting" << endl;
+	for (auto *i = list.end(); i != list.begin(); i = i->prev)
+		cout << i->value << ", ";
+	cout << "\n";
 
 	return 0;
 }
