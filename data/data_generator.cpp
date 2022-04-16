@@ -13,21 +13,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-// Copyright (C) 2022 José Enrique Vilca Campana
-//
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Affero General Public License as
-// published by the Free Software Foundation, either version 3 of the
-// License, or (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU Affero General Public License for more details.
-//
-// You should have received a copy of the GNU Affero General Public License
-// along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 #include <iostream>
 #include <string>
 #include <sstream>
@@ -47,10 +32,9 @@ T bit_number(unsigned bits)
 		return 0;
 	}
 	T n{1};
-	for (unsigned i = 0; i < bits; i++)
+	for (unsigned i = 0; i <= bits; i++)
 	{
 		n <<= 1;
-		n = n | 1;
 	}
 
 	return n;
@@ -84,11 +68,13 @@ int main()
 	{ return distribution(engine); };
 
 	using it_type = unsigned long long;
-	const it_type data_size = bit_number<it_type>(2) + 1;
+	const unsigned bits = 4;
+	const it_type data_size = bit_number<it_type>(bits);
 	// const it_type data_size = std::numeric_limits<it_type>::max();
 
 	std::ofstream out;
-	const std::string file_name = "GD_uniform_distribution__" + to_str(sizeof(intType)) + '-' + to_str(data_size) + ".csv";
+	// const std::string file_name = "GD_uniform_distribution__" + to_str(sizeof(intType)) + '-' + to_str(data_size) + ".csv";
+	const std::string file_name = "GD_uniform_distribution__" + to_str(sizeof(intType)) + "b-" + to_str(bits) + "b.csv";
 
 	out.open(file_name);
 

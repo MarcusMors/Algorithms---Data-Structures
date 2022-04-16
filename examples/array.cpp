@@ -21,10 +21,8 @@ using namespace std;
 
 int main()
 {
-	fstd::array<int, 5> fstd_arr{1, 2, 3, 4, 5};
-	// fstd::array<int> arr{1, 2, 3, 4, 5};
-	std::cout << fstd_arr << '\n';
-	// cout << std_arr << '\n';
+  fstd::array<int, 5> fstd_arr{ 1, 2, 3, 4, 5 };
+  std::cout << fstd_arr << '\n';
 
-	return 0;
+  return 0;
 }
