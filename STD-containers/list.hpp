@@ -25,27 +25,37 @@ template<typename T> struct node
   T value;
   iterator prev{ nullptr };
   iterator next{ nullptr };
-  node() {}
-  node(const T v) : value{ v } {}
-  node(const T v, iterator *n, iterator *p) : value{ v }, next{ n }, prev{ p } {}
-  node(const iterator &n) : next{ n->next }, prev{ n->prev }, value{ n->value } {}
+
+  node() = default;
+  ~node() = default;
+  explicit node(const T v) : value{ v } {}
+  node(const T v, iterator n, iterator p) : value{ v }, next{ n }, prev{ p } {}
+  node(const node<T> &n) : next{ n.next }, prev{ n.prev }, value{ n.value } {}
+  node(const node<T> &&n) noexcept : next{ n.next }, prev{ n.prev }, value{ n.value } {}
+  explicit node(const iterator &n) : next{ n->next }, prev{ n->prev }, value{ n->value } {}
   // void operator=(node<T> t_n)
   // {
   // 	next = t_n.next;
   // 	value = t_n.value;
   // }
+  //   iterator &operator++()
+  //   {
+  //     this = this->next;
+  //     return *this;
+  //   }// forward
 };
 
 template<typename T> struct list
 {
   using size_type = std::size_t;
-  using iterator = node<T> *;
-  using const_iterator = const node<T> *;
+  class iterator;
+  //   using iterator = node<T>;
+  using const_iterator = const iterator;
 
-  list(std::initializer_list<T> init) : sz{ init.size() }
+  explicit list(std::initializer_list<T> init) : sz{ init.size() }
   {
     head = new node<T>(*init.begin());
-    iterator nav = head;
+    iterator nav{ head };
     for (auto i = init.begin() + 1; i != init.end(); ++i) {
       nav->next = new node<T>(*i);
       nav->next->prev = nav;
@@ -104,4 +114,48 @@ template<typename T> ostream &operator<<(std::ostream &os, const list<T> &t_list
 }
 template<typename T> ostream &operator<<(std::ostream &os, const node<T> &t_node) { return os << t_node.value; }
 template<typename T> ostream &operator<<(std::ostream &os, const node<T> *t_node) { return os << t_node->value; }
+
+template<typename T> class list<T>::iterator
+{
+  node<T> *curr;
+  //   node<T> &value = curr->value;
+  //   node<T> *&next = curr->next;
+  //   node<T> *&prev = curr->prev;
+
+public:
+  iterator(node<T> *p) : curr{ p } {}
+  iterator(const iterator &it) : curr{ it.curr } {}
+
+  iterator &operator++()
+  {
+    curr = curr->next;
+    return *this;
+  }// forward
+  iterator &operator--()
+  {
+    curr = curr->prev;
+    return *this;
+  }// backward
+  T &operator*() { return curr->value; }// get value(dereference)
+  T &operator*() const { return curr->value; }// get value(dereference)
+  //   T &operator*() { return curr; }// get value(dereference)
+  //   T &operator*() const { return curr; }// get value(dereference)
+  T **operator->() { return *curr; }// get value(dereference)
+
+  iterator &operator=(const iterator &it)
+  {
+    curr = it.curr;
+    return *this;
+  }
+  iterator operator=(const node<T> *const &it)
+  {
+    curr = it;
+    return *this;
+  }
+
+  bool operator==(const iterator &n) const { return curr == n.curr; }
+  bool operator!=(const iterator &n) const { return curr != n.curr; }
+  operator bool() const { return curr; }
+};
+
 }// namespace fstd

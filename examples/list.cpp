@@ -16,13 +16,13 @@
 #include <iostream>
 // user defined libraries
 #include "../STD-containers/list.hpp"
-
 using namespace std;
 using namespace fstd;
 
 int main()
 {
   fstd::list<int> list{ 0, 1, 2, 3, 4, 5 };
+
   std::cout << "size\t: " << list.size() << '\n';
   std::cout << "list\t: " << list << std::endl;
 
@@ -32,11 +32,14 @@ int main()
   cout << "\nbackward scripting" << endl;
   for (size_t i = list.size(); i > 0; --i) { cout << "[" << i - 1 << "]" << list[i - 1] << ", "; }
 
-  cout << "\nforward iteration" << endl;
-  for (auto *i = list.begin(); i != list.end(); i = i->next) { cout << i->value << ", "; }
+  // cout << "\nforward iteration" << endl;
+  // for (auto *i = list.begin(); i != list.end(); i = i->next) { cout << i->value << ", "; }
 
-  cout << "\nbackward scripting" << endl;
-  for (auto *i = list.end(); i != list.begin(); i = i->prev) { cout << i->value << ", "; }
+  // cout << "\nbackward scripting" << endl;
+  // for (auto *i = list.end(); i != list.begin(); i = i->prev) { cout << i->value << ", "; }
+
+  for (auto e : list) { cout << e; }
+
   cout << "\n";
 
   return 0;
