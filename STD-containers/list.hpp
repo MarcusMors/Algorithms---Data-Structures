@@ -52,9 +52,19 @@ template<typename T> struct list
   //   using iterator = node<T>;
   using const_iterator = const iterator;
 
-  explicit list(std::initializer_list<T> init) : sz{ init.size() }
+  //   explicit list(std::initializer_list<T> init) : sz{ init.size() }
+  //   {
+  //     head = new node<T>(*init.begin());
+  //     iterator nav{ head };
+  //     for (auto i = init.begin() + 1; i != init.end(); ++i) {
+  //       nav->next = new node<T>(*i);
+  //       nav->next->prev = nav;
+  //       nav = nav->next;
+  //     }
+  //     tail = nav;
+  //   }
+  explicit list(std::initializer_list<T> init) : sz{ init.size() }, head{ new node<T>(*init.begin()) }
   {
-    head = new node<T>(*init.begin());
     iterator nav{ head };
     for (auto i = init.begin() + 1; i != init.end(); ++i) {
       nav->next = new node<T>(*i);
@@ -63,6 +73,7 @@ template<typename T> struct list
     }
     tail = nav;
   }
+
   ~list()
   {
     iterator current_n{ begin() };// initialize current node to root
@@ -98,6 +109,7 @@ template<typename T> struct list
     for (size_type i = 0; i < t_i; ++i) nav = nav->next;
     return nav->value;
   }
+  //   const value_t& operator[](std::size_t idx) const { return mVector[idx]; }
 
 private:
   iterator h{ nullptr };
@@ -118,13 +130,15 @@ template<typename T> ostream &operator<<(std::ostream &os, const node<T> *t_node
 template<typename T> class list<T>::iterator
 {
   node<T> *curr;
+  //   node<T> *curr{ nullptr };
   //   node<T> &value = curr->value;
   //   node<T> *&next = curr->next;
   //   node<T> *&prev = curr->prev;
 
 public:
-  iterator(node<T> *p) : curr{ p } {}
+  explicit iterator(node<T> *p) : curr{ p } {}
   iterator(const iterator &it) : curr{ it.curr } {}
+  //   iterator() = default;
 
   iterator &operator++()
   {
@@ -136,11 +150,11 @@ public:
     curr = curr->prev;
     return *this;
   }// backward
-  T &operator*() { return curr->value; }// get value(dereference)
-  T &operator*() const { return curr->value; }// get value(dereference)
+  node<T> &operator*() const { return curr; }// get value(dereference)
   //   T &operator*() { return curr; }// get value(dereference)
   //   T &operator*() const { return curr; }// get value(dereference)
-  T **operator->() { return *curr; }// get value(dereference)
+  node<T> *operator->() const { return curr; }// get value(dereference)
+  //   T &operator->() const { return *curr; }// get value(dereference)
 
   iterator &operator=(const iterator &it)
   {
@@ -153,9 +167,9 @@ public:
     return *this;
   }
 
-  bool operator==(const iterator &n) const { return curr == n.curr; }
-  bool operator!=(const iterator &n) const { return curr != n.curr; }
   operator bool() const { return curr; }
+  bool operator==(const iterator &rhs) const { return curr == rhs.curr; }
+  bool operator!=(const iterator &rhs) const { return curr != rhs.curr; }
 };
 
 }// namespace fstd
