@@ -21,35 +21,24 @@ using namespace std;
 namespace fstd {
 template<typename T> struct node
 {
-  using iterator = node<T> *;
+  //   using iterator = node<T> *;
   T value;
-  iterator prev{ nullptr };
-  iterator next{ nullptr };
+  node<T> *prev{ nullptr };
+  node<T> *next{ nullptr };
 
   node() = default;
   ~node() = default;
   explicit node(const T v) : value{ v } {}
-  node(const T v, iterator n, iterator p) : value{ v }, next{ n }, prev{ p } {}
+  node(const T v, node<T> *n, node<T> *p) : value{ v }, next{ n }, prev{ p } {}
   node(const node<T> &n) : next{ n.next }, prev{ n.prev }, value{ n.value } {}
   node(const node<T> &&n) noexcept : next{ n.next }, prev{ n.prev }, value{ n.value } {}
-  explicit node(const iterator &n) : next{ n->next }, prev{ n->prev }, value{ n->value } {}
-  // void operator=(node<T> t_n)
-  // {
-  // 	next = t_n.next;
-  // 	value = t_n.value;
-  // }
-  //   iterator &operator++()
-  //   {
-  //     this = this->next;
-  //     return *this;
-  //   }// forward
+  explicit node(const node<T> *&n) : next{ n->next }, prev{ n->prev }, value{ n->value } {}
 };
 
 template<typename T> struct list
 {
   using size_type = std::size_t;
   class iterator;
-  //   using iterator = node<T>;
   using const_iterator = const iterator;
 
   //   explicit list(std::initializer_list<T> init) : sz{ init.size() }
@@ -96,9 +85,9 @@ template<typename T> struct list
   size_type size() { return sz; }
 
   iterator begin() { return head; }
-  iterator begin() const { return head; }
   iterator end() { return tail; }
-  iterator end() const { return tail; }
+  const_iterator begin() const { return head; }
+  const_iterator end() const { return tail; }
 
   const_iterator cbegin() const { return head; }
   const_iterator cend() const { return tail; }
@@ -112,10 +101,8 @@ template<typename T> struct list
   //   const value_t& operator[](std::size_t idx) const { return mVector[idx]; }
 
 private:
-  iterator h{ nullptr };
-  iterator &head = h;
-  iterator t{ nullptr };
-  iterator &tail = t;
+  iterator head{ nullptr };
+  iterator tail{ nullptr };
   size_type sz{ 0 };
 };
 
@@ -150,24 +137,22 @@ public:
     curr = curr->prev;
     return *this;
   }// backward
-  node<T> &operator*() const { return curr; }// get value(dereference)
-  //   T &operator*() { return curr; }// get value(dereference)
-  //   T &operator*() const { return curr; }// get value(dereference)
-  node<T> *operator->() const { return curr; }// get value(dereference)
-  //   T &operator->() const { return *curr; }// get value(dereference)
+  node<T> &operator*() const { return *curr; }// dereference
+  node<T> *operator->() const { return curr; }// member of pointer
 
   iterator &operator=(const iterator &it)
   {
     curr = it.curr;
     return *this;
   }
-  iterator operator=(const node<T> *const &it)
+  iterator operator=(node<T> *const &it)
   {
     curr = it;
     return *this;
   }
 
   operator bool() const { return curr; }
+  operator node<T> *() const { return curr; }
   bool operator==(const iterator &rhs) const { return curr == rhs.curr; }
   bool operator!=(const iterator &rhs) const { return curr != rhs.curr; }
 };
