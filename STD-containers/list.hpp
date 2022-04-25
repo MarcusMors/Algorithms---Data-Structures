@@ -21,7 +21,6 @@ using namespace std;
 namespace fstd {
 template<typename T> struct node
 {
-  //   using iterator = node<T> *;
   T value;
   node<T> *prev{ nullptr };
   node<T> *next{ nullptr };
@@ -41,24 +40,13 @@ template<typename T> struct list
   class iterator;
   using const_iterator = const iterator;
 
-  //   explicit list(std::initializer_list<T> init) : sz{ init.size() }
-  //   {
-  //     head = new node<T>(*init.begin());
-  //     iterator nav{ head };
-  //     for (auto i = init.begin() + 1; i != init.end(); ++i) {
-  //       nav->next = new node<T>(*i);
-  //       nav->next->prev = nav;
-  //       nav = nav->next;
-  //     }
-  //     tail = nav;
-  //   }
   explicit list(std::initializer_list<T> init) : sz{ init.size() }, head{ new node<T>(*init.begin()) }
   {
     iterator nav{ head };
     for (auto i = init.begin() + 1; i != init.end(); ++i) {
       nav->next = new node<T>(*i);
       nav->next->prev = nav;
-      nav = nav->next;
+      ++nav;
     }
     tail = nav;
   }
@@ -72,7 +60,7 @@ template<typename T> struct list
       current_n = next_n;// set current to "old" next
     }
   }
-  void push_back(T t_value)
+  void push_back(const T t_value)
   {
     auto temp = new node<T>(t_value);
     if (sz == 0)// empty list
@@ -82,13 +70,13 @@ template<typename T> struct list
     tail->next = temp;
     ++sz;
   }
-  size_type size() { return sz; }
+  void push_front(const T t_value);
 
+  size_type size() { return sz; }
   iterator begin() { return head; }
   iterator end() { return tail; }
   const_iterator begin() const { return head; }
   const_iterator end() const { return tail; }
-
   const_iterator cbegin() const { return head; }
   const_iterator cend() const { return tail; }
 
@@ -98,17 +86,22 @@ template<typename T> struct list
     for (size_type i = 0; i < t_i; ++i) nav = nav->next;
     return nav->value;
   }
-  //   const value_t& operator[](std::size_t idx) const { return mVector[idx]; }
+  //   const T &operator[](size_type t_i) const
+  //   {
+  //     iterator nav{ head };
+  //     for (size_type i = 0; i < t_i; ++i) nav = nav->next;
+  //     return nav->value;
+  //   }
 
 private:
+  size_type sz{ 0 };
   iterator head{ nullptr };
   iterator tail{ nullptr };
-  size_type sz{ 0 };
 };
 
 template<typename T> ostream &operator<<(std::ostream &os, const list<T> &t_list)
 {
-  for (node<T> *i = t_list.begin(); i != t_list.end(); i = i->next) { os << i->value << ", "; }
+  for (auto &&elem : t_list) { os << elem << ", "; }
   return os;
 }
 template<typename T> ostream &operator<<(std::ostream &os, const node<T> &t_node) { return os << t_node.value; }
@@ -117,15 +110,10 @@ template<typename T> ostream &operator<<(std::ostream &os, const node<T> *t_node
 template<typename T> class list<T>::iterator
 {
   node<T> *curr;
-  //   node<T> *curr{ nullptr };
-  //   node<T> &value = curr->value;
-  //   node<T> *&next = curr->next;
-  //   node<T> *&prev = curr->prev;
 
 public:
   explicit iterator(node<T> *p) : curr{ p } {}
   iterator(const iterator &it) : curr{ it.curr } {}
-  //   iterator() = default;
 
   iterator &operator++()
   {
@@ -139,7 +127,6 @@ public:
   }// backward
   node<T> &operator*() const { return *curr; }// dereference
   node<T> *operator->() const { return curr; }// member of pointer
-
   iterator &operator=(const iterator &it)
   {
     curr = it.curr;
