@@ -41,10 +41,10 @@ int main()
   for (auto i = list.rbegin(); i != list.rend(); --i) { std::cout << i->value << ','; }
 
   cout << "\nforward iteration" << endl;
-  for (auto *i = list.begin(); i != list.end(); i = i->next) { cout << i->value << ", "; }
+  for (auto i = list.begin(); i != list.end(); i = i->next) { cout << i->value << ", "; }
 
   cout << "\nbackward scripting" << endl;
-  for (auto *i = list.end(); i != list.begin(); i = i->prev) { cout << i->value << ", "; }
+  for (auto i = list.end(); i != list.begin(); i = i->prev) { cout << i->value << ", "; }
   cout << "\n";
 
   std::cout << "<--- MODIFIERS --->\n";
