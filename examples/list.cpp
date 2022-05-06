@@ -15,22 +15,30 @@
 
 #include <iostream>
 // user defined libraries
-#include "../STD-containers/list.hpp"
+#include "../containers/list.hpp"
+#include <ranges>
 
 using namespace std;
 using namespace fstd;
 
 int main()
 {
-  fstd::list<int> list{ 0, 1, 2, 3, 4, 5 };
+  fstd::list<int> list{ 0, 1, 2, 3, 4, 5 };// NOLINT magic numbers
+
   std::cout << "size\t: " << list.size() << '\n';
   std::cout << "list\t: " << list << std::endl;
 
-  cout << "\nforward scripting" << endl;
-  for (size_t i = 0; i < list.size(); i++) { cout << "[" << i << "]" << list[i] << ", "; }
+  std::cout << "\nforward scripting" << std::endl;
+  for (size_t i = 0; i < list.size(); ++i) { std::cout << "[" << i << "]" << list[i] << ", "; }
 
-  cout << "\nbackward scripting" << endl;
-  for (size_t i = list.size(); i > 0; --i) { cout << "[" << i - 1 << "]" << list[i - 1] << ", "; }
+  std::cout << "\nbackward scripting" << std::endl;
+  for (size_t i = list.size(); i > 0; --i) { std::cout << "[" << i - 1 << "]" << list[i - 1] << ", "; }
+
+  std::cout << "\niteration" << std::endl;
+  for (auto i = list.begin(); i != list.end(); ++i) { std::cout << i->value << ','; }// NOLINT modern range for loop
+
+  std::cout << "\nreverse iteration" << std::endl;
+  for (auto i = list.rbegin(); i != list.rend(); --i) { std::cout << i->value << ','; }
 
   cout << "\nforward iteration" << endl;
   for (auto *i = list.begin(); i != list.end(); i = i->next) { cout << i->value << ", "; }
@@ -39,5 +47,62 @@ int main()
   for (auto *i = list.end(); i != list.begin(); i = i->prev) { cout << i->value << ", "; }
   cout << "\n";
 
+  std::cout << "<--- MODIFIERS --->\n";
+  list.push_back(6);// NOLINT magic numbers
+  for (const auto &elem : list) { std::cout << elem << ','; }
+  std::cout << "\n";
+  list.push_back(7);// NOLINT magic numbers
+  for (const auto &elem : list) { std::cout << elem << ','; }
+  std::cout << "\n";
+  list.push_back(8);// NOLINT magic numbers
+  for (const auto &elem : list) { std::cout << elem << ','; }
+  std::cout << "\n";
+  list.push_back(9);// NOLINT magic numbers
+  for (const auto &elem : list) { std::cout << elem << ','; }
+  std::cout << "\n";
+  list.push_back(10);// NOLINT magic numbers
+  for (const auto &elem : list) { std::cout << elem << ','; }
+  std::cout << "\n";
+  list.push_back(11);// NOLINT magic numbers
+  for (const auto &elem : list) { std::cout << elem << ','; }
+  std::cout << "\n";
+  list.pop_back();// NOLINT magic numbers
+  for (const auto &elem : list) { std::cout << elem << ','; }
+  std::cout << "\n";
+  list.pop_back();// NOLINT magic numbers
+  for (const auto &elem : list) { std::cout << elem << ','; }
+  std::cout << "\n";
+  list.pop_back();// NOLINT magic numbers
+  for (const auto &elem : list) { std::cout << elem << ','; }
+
+  std::cout << "<--- MODIFIERS --->\n";
+  list.push_back(6);// NOLINT magic numbers
+  for (const auto &elem : list) { std::cout << elem << ','; }
+  std::cout << "\n";
+  list.push_back(7);// NOLINT magic numbers
+  for (const auto &elem : list) { std::cout << elem << ','; }
+  std::cout << "\n";
+  list.push_back(8);// NOLINT magic numbers
+  for (const auto &elem : list) { std::cout << elem << ','; }
+  std::cout << "\n";
+  list.push_back(9);// NOLINT magic numbers
+  for (const auto &elem : list) { std::cout << elem << ','; }
+  std::cout << "\n";
+  list.push_back(10);// NOLINT magic numbers
+  for (const auto &elem : list) { std::cout << elem << ','; }
+  std::cout << "\n";
+  list.push_back(11);// NOLINT magic numbers
+  for (const auto &elem : list) { std::cout << elem << ','; }
+  std::cout << "\n";
+  list.pop_back();// NOLINT magic numbers
+  for (const auto &elem : list) { std::cout << elem << ','; }
+  std::cout << "\n";
+  list.pop_back();// NOLINT magic numbers
+  for (const auto &elem : list) { std::cout << elem << ','; }
+  std::cout << "\n";
+  list.pop_back();// NOLINT magic numbers
+  for (const auto &elem : list) { std::cout << elem << ','; }
+
+  std::cout << "\n";
   return 0;
 }
