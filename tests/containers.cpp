@@ -30,6 +30,8 @@ TEST_CASE("lists can be initialized and resized")
 {
   // initialization
   const std::initializer_list<int> int_init{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+  auto int_init_begin{ int_init.begin() };
+  auto int_init_end{ int_init.end() };
   std::list<int> std_list{ int_init };
   fstd::list<int> fstd_list{ int_init };
   // auto int_init_begin_it{ int_init.begin() };
@@ -50,48 +52,33 @@ TEST_CASE("lists can be initialized and resized")
     ==========================================================================*/
   SECTION("forward subscripting")
   {
-    const auto *const int_init_BEGIN{ int_init.begin() };
-    for (size_t i = 0; i < fstd_list.size(); ++i) {
-      const auto fstd_list_i = fstd_list[i];
-      const auto std_list_i = *(int_init_BEGIN + i);// NOLINT pointer arithmetic
-      REQUIRE(fstd_list_i == std_list_i);
-    }
+    for (size_t i = 0; i < fstd_list.size(); (++i, ++int_init_begin)) { REQUIRE(fstd_list[i] == *int_init_begin); }
   }
   SECTION("backward scripting")
   {
-    const auto *const int_init_BEGIN{ int_init.begin() };
-    for (int i = fstd_list.size() - 1; i >= 0; --i) {// NOLINT
-      const auto fstd_list_i = fstd_list[i];
-      const auto std_list_i = *(int_init_BEGIN + i);// NOLINT pointer arithmetic
-      REQUIRE(fstd_list_i == std_list_i);
+    for (int i = fstd_list.size() - 1; i >= 0; --i) {
+      --int_init_end;
+      REQUIRE(fstd_list[i] == *int_init_end);
     }
   }
   SECTION("iteration")
   {
-    std::list<int>::size_type i{ 0 };// NOLINT magic numbers
-    const auto *const int_init_IT{ int_init.begin() };
-    for (auto it = fstd_list.begin(); it != fstd_list.end(); ++it) {// NOLINT modern range for loop
-      REQUIRE(*it == *(int_init_IT + i));// NOLINT pointer arithmetic
-      ++i;
+    for (auto it = fstd_list.begin(); it != fstd_list.end(); (++it, ++int_init_begin)) {
+      REQUIRE(*it == *(int_init_begin));
     }
   }
   SECTION("reverse iteration")
   {
-    std::list<int>::size_type i{ 1 };// NOLINT magic numbers
-    const auto *const int_init_IT{ int_init.end() };
     for (auto it = fstd_list.rbegin(); it != fstd_list.rend(); --it) {
-      REQUIRE(*it == *(int_init_IT - i));// NOLINT pointer arithmetic
-      ++i;
+      --int_init_end;
+      REQUIRE(*it == *(int_init_end));
     }
   }
-
   SECTION("range-based-for loop")
   {
-    std::list<int>::size_type i{ 0 };// NOLINT magic numbers
-    const auto *const int_init_IT{ int_init.begin() };
     for (const auto &elem : fstd_list) {
-      REQUIRE(elem == *(int_init_IT + i));// NOLINT pointer arithmetic
-      ++i;
+      REQUIRE(elem == *(int_init_begin));
+      ++int_init_begin;
     }
   }
   /*==========================================================================
@@ -105,9 +92,11 @@ TEST_CASE("lists can be initialized and resized")
   SECTION("empty")
   {
     fstd::list<int> fstd_empty_list{};
-    fstd::list<int> std_empty_list{};
+    std::list<int> std_empty_list{};
     REQUIRE(fstd_empty_list.empty());
     REQUIRE(fstd_empty_list.empty() == std_empty_list.empty());
+    REQUIRE(fstd_list.empty() == std_list.empty());
+    REQUIRE(fstd_list.empty() == false);
   }
 
   /*==========================================================================
@@ -132,8 +121,8 @@ TEST_CASE("lists can be initialized and resized")
       std_list.pop_back();
     }
 
-    auto STD_LIST_IT{ std_list.begin() };
-    for (auto it{ fstd_list.begin() }; it != fstd_list.end(); (++it, ++STD_LIST_IT)) { REQUIRE(*it == *(STD_LIST_IT)); }
+    auto std_list_it{ std_list.begin() };
+    for (auto it{ fstd_list.begin() }; it != fstd_list.end(); (++it, ++std_list_it)) { REQUIRE(*it == *(std_list_it)); }
   }
   SECTION("push_front")
   {
@@ -143,8 +132,8 @@ TEST_CASE("lists can be initialized and resized")
       std_list.push_front(num);
     }
 
-    auto STD_LIST_IT{ std_list.begin() };
-    for (auto it{ fstd_list.begin() }; it != fstd_list.end(); ++it, ++STD_LIST_IT) { REQUIRE(*it == *STD_LIST_IT); }
+    auto std_list_it{ std_list.begin() };
+    for (auto it{ fstd_list.begin() }; it != fstd_list.end(); ++it, ++std_list_it) { REQUIRE(*it == *std_list_it); }
   }
   SECTION("pop_front")
   {
@@ -157,21 +146,25 @@ TEST_CASE("lists can be initialized and resized")
     auto STD_LIST_IT{ std_list.begin() };
     for (auto it{ fstd_list.begin() }; it != fstd_list.end(); (++it, ++STD_LIST_IT)) { REQUIRE(*it == *STD_LIST_IT); }
   }
-  SECTION("resizing bigger change size")
+  SECTION("resizing bigger change size, creating nodes")
   {
     const std::list<int>::size_type new_size{ 15 };// NOLINT magic numbers
-    std_list.resize(new_size);
-    fstd_list.resize(new_size);
-    REQUIRE(fstd_list.size() == std_list.size());
-    REQUIRE(fstd_list.size() == new_size);
+    fstd::list<int> resizable_fstd_list{ int_init };
+    std::list<int> resizable_std_list{ int_init };
+    resizable_fstd_list.resize(new_size);
+    resizable_std_list.resize(new_size);
+    REQUIRE(resizable_fstd_list.size() == resizable_std_list.size());
+    REQUIRE(resizable_std_list.size() == new_size);
   }
-  SECTION("resizing smaller change size")
+  SECTION("resizing smaller change size, deleting nodes")
   {
     const std::list<int>::size_type new_size{ 3 };// NOLINT magic numbers
-    std_list.resize(new_size);
-    fstd_list.resize(new_size);
-    REQUIRE(fstd_list.size() == std_list.size());
-    REQUIRE(fstd_list.size() == new_size);
+    fstd::list<int> resizable_fstd_list{ int_init };
+    std::list<int> resizable_std_list{ int_init };
+    resizable_fstd_list.resize(new_size);
+    resizable_std_list.resize(new_size);
+    REQUIRE(resizable_fstd_list.size() == resizable_std_list.size());
+    REQUIRE(resizable_std_list.size() == new_size);
   }
   // SECTION("swap")
   // {

@@ -95,7 +95,7 @@ template<typename T> struct list
   // Type requirements
   // - T must meet the requirements of DefaultInsertable in order to use overload (1).
   // - T must meet the requirements of CopyInsertable in order to use overload (2).
-  void resize(const size_type &);// CopyInsertable  // needs testing
+  void resize(const size_type &new_size);// CopyInsertable
   void swap(list &);
 
   // OPERATIONS
@@ -272,29 +272,31 @@ template<class T> void fstd::list<T>::pop_front()
 // Type requirements
 // - T must meet the requirements of DefaultInsertable in order to use overload (1).
 // - T must meet the requirements of CopyInsertable in order to use overload (2).
-template<class T> void fstd::list<T>::resize(const size_type &count)// CopyInsertable  // needs testing
+template<class T> void fstd::list<T>::resize(const size_type &new_size)// CopyInsertable  // needs testing
 {
-  // static_assert(count > 0);
+  // static_assert(new_size > 0);
   const auto delete_nodes = [&]() {
-    iterator current_n{ tail };
-    while (sz > count) {
-      iterator prev_n{ current_n->prev };
-      delete current_n;
-      current_n = prev_n;
-      --sz;
-    }
-    tail = current_n;
+    // iterator current_n{ tail };
+    // while (sz > new_size) {
+    //   iterator prev_n{ current_n->prev };
+    //   delete current_n;
+    //   current_n = prev_n;
+    //   --sz;
+    // }
+    // tail = current_n;
+    while (sz > new_size) { pop_back(); }
   };
   const auto create_nodes = [&]() {
-    while (sz < count) {
-      tail->next = new node<T>();
-      tail->next->prev = tail;
-      ++tail;
-      ++sz;
-    }
+    // while (sz < new_size) {
+    //   cout << "create" << endl;
+    //   tail->next = new node<T>(T{}, nullptr, tail);
+    //   ++tail;
+    //   ++sz;
+    // }
+    while (sz < new_size) { push_back(T{}); }
   };
 
-  (count < sz) ? delete_nodes() : create_nodes();
+  (new_size < sz) ? delete_nodes() : create_nodes();
 }
 template<class T> void fstd::list<T>::swap(list &t_list)
 {

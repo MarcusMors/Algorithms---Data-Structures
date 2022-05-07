@@ -5,6 +5,7 @@ data/GD*
 *helper*
 *aux*
 mock
+tempCodeRunnerFile*
 
 # text editors and IDEs
 .vscode
