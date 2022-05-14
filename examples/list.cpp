@@ -14,9 +14,9 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <iostream>
+#include <ranges>
 // user defined libraries
 #include "../containers/list.hpp"
-#include <ranges>
 
 using namespace std;
 using namespace fstd;

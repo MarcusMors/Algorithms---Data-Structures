@@ -84,7 +84,7 @@ template<typename T> struct list
   // insert
   // emplace
   // erase
-  void push_back(const T);
+  void push_back(const T t_value = T{});
   // emplace back
   void pop_back();
   void push_front(const T);
