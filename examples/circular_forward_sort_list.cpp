@@ -22,7 +22,7 @@ using namespace fstd;
 
 int main()
 {
-  fstd::circular_forward_sort_list<int> list{ 0, 1, 2, 3, 4, 5 };// NOLINT magic numbers
+  fstd::circular_forward_sort_list<int, fstd::ascendant<int>> list{ 0, 1, 2, 3, 4, 5 };// NOLINT magic numbers
 
   std::cout << "size\t: " << list.size() << '\n';
   // std::cout << "list\t: " << list << std::endl;

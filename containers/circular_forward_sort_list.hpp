@@ -52,7 +52,7 @@ template<typename T, class O> struct circular_forward_sort_list
     head = new node<T>(*init.begin());// NOLINT
     iterator nav{ head };
     for (auto i = init.begin() + 1; i != init.end(); (++i, ++nav)) { nav->next = new node<T>(*i); }// NOLINT
-    nav->next = head;
+    nav->next = static_cast<node<T> *>(head);
     // cppcheck-suppress memleak ; i know what am doing... i know
   }
 
@@ -130,14 +130,14 @@ template<typename T, class O> struct circular_forward_sort_list
   {
     // ascendant, value > *begin()
     // descendant, value < *begin()
-    auto advance_to_the_next_ptr = [&] { nav = &((*nav)->next); };
+    auto advance_to_next_ptr = [&] { nav = &((*nav)->next); };
 
     nav = &head;
     if (!O(value, **nav)) { return false; }
 
     // nav = &((*nav)->next);
-    advance_to_the_next_ptr();
-    for (; *nav && *nav != head && O(value > **nav); advance_to_the_next_ptr()) { ; }
+    advance_to_next_ptr();
+    for (; *nav && *nav != head && O(value > **nav); advance_to_next_ptr()) { ; }
     return *nav && (**nav == value);
     // when deleting, special case for Head
   }
@@ -243,7 +243,6 @@ template<class T, class O> bool fstd::circular_forward_sort_list<T, O>::push(con
   iterator *ptr;// NOLINT initialization
 
   if (find(t_value, ptr)) { return false; }
-  // create node
   iterator new_node{ new node<T>(t_value, *ptr) };
   *ptr = new_node;
   return true;
@@ -267,17 +266,17 @@ template<class T, class O> bool fstd::circular_forward_sort_list<T, O>::push(con
 // }
 
 
-template<class T, class O> void fstd::circular_forward_sort_list<T, O>::resize(const size_type &new_size)
-{
-  const auto delete_nodes = [&]() {
-    while (sz > new_size) { pop_back(); }
-  };
-  const auto create_nodes = [&]() {
-    while (sz < new_size) { push(T{}); }
-  };
+// template<class T, class O> void fstd::circular_forward_sort_list<T, O>::resize(const size_type &new_size)
+// {
+//   const auto delete_nodes = [&]() {
+//     while (sz > new_size) { pop_back(); }
+//   };
+//   const auto create_nodes = [&]() {
+//     while (sz < new_size) { push(T{}); }
+//   };
 
-  (new_size < sz) ? delete_nodes() : create_nodes();
-}
+//   (new_size < sz) ? delete_nodes() : create_nodes();
+// }
 
 // template<class T> void fstd::circular_forward_sort_list<T,O>::swap(circular_forward_sort_list &t_list)
 // {

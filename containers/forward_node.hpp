@@ -26,6 +26,7 @@ template<typename T> struct forward_node
   forward_node(const forward_node<T> &n) : next{ n.next }, value{ n.value } {}
   forward_node(const forward_node<T> &&n) noexcept : next{ n.next }, value{ n.value } {}
   explicit forward_node(const forward_node<T> *&n) : next{ n->next }, value{ n->value } {}
+  // forward_node &operator=(forward_node *&) = default;
   forward_node &operator=(forward_node const &) = default;
   forward_node &operator=(forward_node &&) noexcept = default;
 };
