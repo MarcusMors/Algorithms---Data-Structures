@@ -16,15 +16,16 @@
 namespace fstd {
 template<typename T> struct forward_node
 {
-  T value;
+  T value{};
   forward_node<T> *next{ nullptr };
 
   forward_node() = default;
   ~forward_node() = default;
-  explicit forward_node(const T v) : value{ v } {}// NOLINT
+  explicit forward_node(const T v) : value{ v } {}
   forward_node(const T v, forward_node<T> *n) : value{ v }, next{ n } {}// NOLINT
-  forward_node(const forward_node<T> &n) : next{ n.next }, value{ n.value } {}
-  forward_node(const forward_node<T> &&n) noexcept : next{ n.next }, value{ n.value } {}
+
+  explicit forward_node(const forward_node<T> &n) : next{ n.next }, value{ n.value } {}
+  explicit forward_node(const forward_node<T> &&n) noexcept : next{ n.next }, value{ n.value } {}
   explicit forward_node(const forward_node<T> *&n) : next{ n->next }, value{ n->value } {}
   // forward_node &operator=(forward_node *&) = default;
   forward_node &operator=(forward_node const &) = default;
