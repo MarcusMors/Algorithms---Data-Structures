@@ -2,6 +2,7 @@
 data/GD*
 
 # helpers
+mock
 *helper*
 *aux*
 tempCodeRunnerFile*
