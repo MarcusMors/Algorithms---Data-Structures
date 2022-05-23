@@ -1,5 +1,5 @@
-#ifndef __CIRCULAR_FORWARD_SORT_LIST_H__
-#define __CIRCULAR_FORWARD_SORT_LIST_H__
+#ifndef __FORWARD_SORT_LIST_H__
+#define __FORWARD_SORT_LIST_H__
 
 // Copyright (C) 2022 José Enrique Vilca Campana
 //
@@ -17,7 +17,6 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 // standard library
-#include <algorithm>
 #include <initializer_list>
 #include <iostream>
 #include <limits>
@@ -27,144 +26,122 @@
 using namespace std;
 
 namespace fstd {
-template<class T> using node = forward_node<T>;
 
-template<class T> struct ascendant
-{
-  bool operator()(T lhs, T rhs) { return lhs > rhs; }
-};
-
-
-template<typename T, class O> struct circular_forward_sort_list
+template<typename T> struct circular_forward_sort_list
 {
   using value_type = T;
-  using size_type = std::size_t;
+  // using size_type = std::size_t;
   class iterator;
   using const_iterator = const iterator;
 
+  // MEMBER FUNCTIONS
   circular_forward_sort_list() = default;
-
   // cppcheck-suppress noExplicitConstructor ; allowing circular_forward_sort_list A = {1,2,3} and A{1,2,3}
-  circular_forward_sort_list(std::initializer_list<T> init) : sz{ init.size() }
+  circular_forward_sort_list(std::initializer_list<T> init)
+    : head{ new forward_node<T>(*init.begin()) }, sentinel_node{ T{}, head }
   {
-    // is it sorted?
-    std::sort(init.begin(), init.end());
-    head = new node<T>(*init.begin());// NOLINT
-    iterator nav{ head };
-    for (auto i = init.begin() + 1; i != init.end(); (++i, ++nav)) { nav->next = new node<T>(*i); }// NOLINT
-    nav->next = static_cast<node<T> *>(head);
-    // cppcheck-suppress memleak ; i know what am doing... i know
+    forward_node<T> *last_node{ head };// NOLINT not initialized
+    for (auto it = init.begin() + 1; it != init.end(); ++it) {
+      T value = *it;
+      forward_node<T> **ptr;// NOLINT not initialized
+      if (constructor_find(value, ptr)) { continue; }
+      // std::cout << "found : " << (*ptr)->value << std::endl;
+      forward_node<T> *new_node;// NOLINT not initialized
+      new_node = new forward_node<T>(value, *ptr);
+      // new_node->next = *ptr;
+      if (*ptr == head) { sentinel_node.next = new_node; }
+      *ptr = new_node;
+      if (new_node->value > last_node->value) { last_node = new_node; }
+    }
+    last_node->next = &sentinel_node;
+    // new_node->next = &sentinel_node;
   }
 
-  circular_forward_sort_list(const circular_forward_sort_list &scfl) : head{ scfl.head } {}
+  circular_forward_sort_list(const circular_forward_sort_list &t_l) : head{ t_l.head }, sentinel_node{ T{}, head } {}
 
   ~circular_forward_sort_list()
   {
     iterator current_n{ begin() };
-    // first case
-    // do first case
-    while (current_n != head) {
+    while (current_n != static_cast<iterator>(&sentinel_node)) {
       iterator next_n{ current_n->next };
-      delete current_n;// NOLINT
+      delete current_n;
       current_n = next_n;
     }
   }
+  // operator=
+  // assign
+  // get_allocator
 
   //  ELEMENT ACCESS
-  T front() const { return *head; }
-  T back() const { return operator[](sz); }
+  T front() const { return head->value; }
+  bool constructor_find(const T &t_value, forward_node<T> **&t_ptr)
+  {
+    for (t_ptr = &head; (*t_ptr) && (t_value > (*t_ptr)->value); t_ptr = &((*t_ptr)->next)) { ; }
+    return (*t_ptr) && ((*t_ptr)->value == t_value);
+  }
+  bool find(const T &t_value, forward_node<T> **&t_ptr)
+  {
+    // std::cout << "looking for : " << t_value << std::endl;
+    for (t_ptr = &head; (*t_ptr != &sentinel_node) && (t_value > (*t_ptr)->value); t_ptr = &((*t_ptr)->next)) { ; }
+    // std::cout << (*t_ptr != &sentinel_node) << "&&" << ((*t_ptr)->value == t_value) << std::endl;
+    return (*t_ptr != &sentinel_node) && ((*t_ptr)->value == t_value);
+  }
 
   // ITERATORS
-  iterator begin() { return head; }
-  iterator end() { return head; }
+  // before_begin // returns an iterator to the element before beginning
+  // cbefore_begin
+  iterator begin() { return static_cast<iterator>(head); }
+  iterator begin() const { return static_cast<iterator>(head); }
+
+  // [[nodiscard]] forward_node* end() { return &sentinel_node; }
+  // [[nodiscard]] forward_node* end() const { return &sentinel_node; }
+
+  [[nodiscard]] iterator end() { return static_cast<iterator>(sentinel_node_ptr); }
+  [[nodiscard]] iterator end() const { return static_cast<iterator>(sentinel_node_ptr); }
+
+  // const_iterator begin() const { return head; }
+  // [[nodiscard]] decltype(nullptr) end() const { return nullptr; }
+  // const_iterator cbegin() const { return head; }
+  // [[nodiscard]] decltype(nullptr) cend() const { return nullptr; }
 
   // CAPACITY
-  size_type size() { return sz; }
-  [[nodiscard]] bool empty() const { return (!head && sz == 0); }
-  size_type max_size() { return std::numeric_limits<size_type>::max(); }
+  [[nodiscard]] bool empty() const { return !head; }
 
   // MODIFIERS
-  // clear
-  // insert
-  // emplace
-  // erase
-  bool push(const T t_value = T{});
-  // emplace back
-  // void pop_back();
-  // void pop_front();
-  void resize(const size_type &new_size);// CopyInsertable
-  // void swap(circular_forward_sort_list &);
+
+  bool insert(const T t_value);
+  bool remove(const T &t_value);
 
   // OPERATIONS
   // merge
-  // splice
-  bool remove(T t_value)
-  {
-    iterator *current_ptr;
-    if (!Find(t_value, current_ptr)) { return false; }
-
-    iterator temp{ *current_ptr };
-    *current_ptr = temp->next;
-    delete temp;// NOLINT
-    return true;
-  }
+  // splice_after
+  // remove
   // remove_if
   // reverse
   // unique
   // sort
 
   // OPERATORS
-
-  const T &operator[](const size_type &t_i) { return *(head + t_i); }
-  const T &operator[](const size_type &t_i) const { return *(head + t_i); }
-
-  circular_forward_sort_list &operator=(const circular_forward_sort_list rhs)
+  circular_forward_sort_list &operator=(const circular_forward_sort_list t_l)
   {
-    sz = rhs.sz;
-    head = rhs.head;
+    head = t_l.head;
     return *this;
-  }
-  circular_forward_sort_list &operator=(circular_forward_sort_list const &) = default;
-  circular_forward_sort_list &operator=(circular_forward_sort_list &&) noexcept = default;
-  bool find(const T &value, iterator *&nav)
-  {
-    // ascendant, value > *begin()
-    // descendant, value < *begin()
-    auto advance_to_next_ptr = [&] { nav = &((*nav)->next); };
-
-    nav = &head;
-    if (!O(value, **nav)) { return false; }
-
-    // nav = &((*nav)->next);
-    advance_to_next_ptr();
-    for (; *nav && *nav != head && O(value > **nav); advance_to_next_ptr()) { ; }
-    return *nav && (**nav == value);
-    // when deleting, special case for Head
   }
 
 private:
-  size_type sz{ 0 };
-  iterator head{ nullptr };
+  // iterator head{ nullptr };
+  forward_node<T> *head{ nullptr };
+  forward_node<T> sentinel_node{ T(), nullptr };
+  forward_node<T> *sentinel_node_ptr{ &sentinel_node };
 };
 
-//  Non-member functions
-// operator ==
-// operator !=
-// operator <
-// operator <=
-// operator >
-// operator >=
-// swap
-// erase
-// erase_if
 
-
-template<class T, class O> class circular_forward_sort_list<T, O>::iterator
+template<typename T> class circular_forward_sort_list<T>::iterator
 {
-  node<T> *curr;
+  forward_node<T> *curr;
 
 public:
-  explicit iterator(node<T> *p) : curr{ p } {}
+  iterator(forward_node<T> *node) : curr{ node } {}
   iterator(const iterator &it) : curr{ it.curr } {}
 
   iterator &operator++()
@@ -172,56 +149,39 @@ public:
     curr = curr->next;
     return *this;
   }// forward
-  iterator &operator--()
-  {
-    curr = curr->prev;
-    return *this;
-  }// backward
-
-  iterator operator+(int rhs)
-  {
-    while (rhs > 0) {
-      ++(*this);
-      --rhs;
-    }
-  }
-  iterator operator-(int rhs)
-  {
-    while (rhs < 0) {
-      --(*this);
-      ++rhs;
-    }
-  }
-
   T &operator*() const { return curr->value; }// dereference
-  node<T> *operator->() const { return curr; }// member of pointer
+  forward_node<T> *operator->() const { return curr; }// member of pointer
   iterator &operator=(const iterator &it)
   {
     curr = it.curr;
     return *this;
   }
-  iterator operator=(node<T> *const &it)
+  iterator operator=(forward_node<T> *const &it)
   {
     curr = it;
     return *this;
   }
 
-  explicit operator bool() const { return curr; }
-  explicit operator node<T> *() const { return curr; }
+  operator bool() const { return curr; }
+  operator forward_node<T> *() const { return curr; }
   bool operator==(const iterator &rhs) const { return curr == rhs.curr; }
+  bool operator!=(const forward_node<T> *&rhs) const { return curr != rhs->curr; }
   bool operator!=(const iterator &rhs) const { return curr != rhs.curr; }
+  bool operator!=(decltype(nullptr) rhs) const { return curr != rhs; }
 };
 
-template<class T, class O> ostream &operator<<(std::ostream &os, const circular_forward_sort_list<T, O> &t_list)
+// template<typename T> ostream &operator<<(std::ostream &os, const circular_forward_sort_list<T> &t_list)
+// {
+//   for (auto it = t_list.begin(); it != t_list.end(); ++it) { os << *it << ", "; }
+//   // for (auto &&elem : t_list) { os << elem << ", "; }
+//   return os;
+// }
+template<typename T> ostream &operator<<(std::ostream &os, const circular_forward_sort_list<T> &t_list)
 {
-  for (auto &&elem : t_list) { os << elem << ", "; }
+  for (auto it = t_list.begin(); it != t_list.end(); ++it) { os << *it << ", "; }
+  // for (auto &&elem : t_list) { os << elem << ", "; }
   return os;
 }
-
-
-// template<class T> ostream &operator<<(std::ostream &os, const node<T> &t_node) { return os << t_node.value; }
-// template<class T> ostream &operator<<(std::ostream &os, const node<T> *t_node) { return os << t_node->value; }
-
 
 }// namespace fstd
 
@@ -229,72 +189,29 @@ template<class T, class O> ostream &operator<<(std::ostream &os, const circular_
  * IMPLEMENTATION DETAILS
  ****************************************************************************/
 
-
-// CAPACITY
-// max_size //returns the maximum possible number of elements
-
 // MODIFIERS
 // clear
-// insert
-// emplace
-// erase
-template<class T, class O> bool fstd::circular_forward_sort_list<T, O>::push(const T t_value)
+template<class T> bool fstd::circular_forward_sort_list<T>::insert(const T t_value)
 {
-  iterator *ptr;// NOLINT initialization
-
+  // iterator *ptr;// NOLINT not initialized
+  forward_node<T> **ptr;// NOLINT not initialized
   if (find(t_value, ptr)) { return false; }
-  iterator new_node{ new node<T>(t_value, *ptr) };
+  // std::cout << "found" << (*ptr)->value << std::endl;
+  forward_node<T> *new_node = new forward_node<T>(t_value, *ptr);
+  if (*ptr == head) { sentinel_node.next = new_node; }
   *ptr = new_node;
   return true;
 }
 
+template<class T> bool fstd::circular_forward_sort_list<T>::remove(const T &t_value)
+{
+  // iterator *ptr;// NOLINT not initialized
+  forward_node<T> **ptr;// NOLINT not initialized
+  if (!find(t_value, ptr)) { return false; }
+  forward_node<T> *node_to_be_deleted = *ptr;
+  *ptr = (*ptr)->next;
+  delete node_to_be_deleted;
+  return true;
+}
 
-// template<class T, class O> void fstd::circular_forward_sort_list<T, O>::pop_back()
-// {
-//   const iterator current_n{ tail };
-//   tail = tail->prev;
-//   tail->next = nullptr;
-//   delete current_n;
-//   --sz;
-// }
-
-// template<class T, class O> void fstd::circular_forward_sort_list<T, O>::pop_front()
-// {
-//   head = head->next;
-//   delete head->prev;
-//   --sz;
-// }
-
-
-// template<class T, class O> void fstd::circular_forward_sort_list<T, O>::resize(const size_type &new_size)
-// {
-//   const auto delete_nodes = [&]() {
-//     while (sz > new_size) { pop_back(); }
-//   };
-//   const auto create_nodes = [&]() {
-//     while (sz < new_size) { push(T{}); }
-//   };
-
-//   (new_size < sz) ? delete_nodes() : create_nodes();
-// }
-
-// template<class T> void fstd::circular_forward_sort_list<T,O>::swap(circular_forward_sort_list &t_list)
-// {
-//   circular_forward_sort_list temp{ *this };
-//   *this = t_list;
-//   t_list = temp;
-// }
-
-
-// void swap(iterator &a, iterator &b) const
-// {
-//   iterator temp{ a };
-//   a->prev = b->prev;
-//   a->next = b->next;
-//   temp->next->prev = b;
-//   temp->prev->next = b;
-//   b->prev = temp->prev;
-//   b->next = temp->next;
-// }
-
-#endif// __CIRCULAR_FORWARD_SORT_LIST_H__
+#endif// __FORWARD_SORT_LIST_H__

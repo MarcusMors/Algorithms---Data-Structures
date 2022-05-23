@@ -13,61 +13,45 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <iostream>
-#include <ranges>
+#include <vector>
 // user defined libraries
 #include "../containers/circular_forward_sort_list.hpp"
 
-using namespace std;
-using namespace fstd;
+template<class T, class O> void insert_and_print(const std::vector<T> &in, O &out)
+{
+  for (const auto &elem : in) { out.insert(elem); }
+  std::cout << out << std::endl;
+}
+template<class T, class O> void remove_and_print(const std::vector<T> &in, O &out)
+{
+  for (const auto &elem : in) { out.remove(elem); }
+  std::cout << out << std::endl;
+}
 
 int main()
 {
-  fstd::circular_forward_sort_list<int, fstd::ascendant<int>> list{ 0, 1, 2, 3, 4, 5 };// NOLINT magic numbers
+  fstd::circular_forward_sort_list<int> list{ 10, 1, 6, 8, 3, 0, 14, 20, 21 };// NOLINT magic numbers
 
-  std::cout << "size\t: " << list.size() << '\n';
-  // std::cout << "list\t: " << list << std::endl;
+  std::cout << "list\t: " << list << std::endl;
 
-  std::cout << "\nforward scripting" << std::endl;
-  for (size_t i = 0; i < list.size(); ++i) { std::cout << "[" << i << "]" << list[i] << ", "; }
+  std::cout << "\niteration" << std::endl;
+  for (auto it = list.begin(); it != list.end(); ++it) { std::cout << *it << ','; }// NOLINT modern range for loop
 
-  std::cout << "\nbackward scripting" << std::endl;
-  for (size_t i = list.size(); i > 0; --i) { std::cout << "[" << i - 1 << "]" << list[i - 1] << ", "; }
+  std::cout << "\n<--- MODIFIERS --->\n";
+  std::vector<int> insert_numbers{ 10, 23, 14, 16, 2, 15, 10, 20 };// NOLINT magic numbers
+  std::vector<int> remove_numbers{ 5, 1, 8, 10, 11, 14, 17, 20, 15 };// NOLINT magic numbers
 
-  // std::cout << "\niteration" << std::endl;
-  // for (auto i = list.begin(); i != list.end(); ++i) { std::cout << i->value << ','; }// NOLINT modern range for loop
+  std::cout << "\ninsert : ";
+  for (const auto &elem : insert_numbers) { std::cout << elem << ", " << std::flush; }
+  std::cout << "\n";
 
-  std::cout << "<--- MODIFIERS --->\n";
-  auto push_and_print = [&](auto val) {
-    list.push(val);
-    for (const auto &elem : list) { std::cout << elem << ','; }
-    std::cout << "\n";
-  };
-  auto remove_and_print = [&](auto val) {
-    list.remove(val);
-    for (const auto &elem : list) { std::cout << elem << ','; }
-    std::cout << "\n";
-  };
+  insert_and_print(insert_numbers, list);
 
-  push_and_print(6);// NOLINT magic numbers
-  push_and_print(7);// NOLINT magic numbers
-  push_and_print(8);// NOLINT magic numbers
-  push_and_print(9);// NOLINT magic numbers
-  push_and_print(10);// NOLINT magic numbers
-  push_and_print(11);// NOLINT magic numbers
-  remove_and_print(9);// NOLINT magic numbers
-  remove_and_print(8);// NOLINT magic numbers
-  remove_and_print(3);// NOLINT magic numbers
+  std::cout << "\nremove : ";
+  for (const auto &elem : remove_numbers) { std::cout << elem << ", " << std::flush; }
+  std::cout << "\n";
+  remove_and_print(remove_numbers, list);
 
-  std::cout << "<--- MODIFIERS --->\n";
-  push_and_print(6);// NOLINT magic numbers
-  push_and_print(7);// NOLINT magic numbers
-  push_and_print(8);// NOLINT magic numbers
-  push_and_print(9);// NOLINT magic numbers
-  push_and_print(10);// NOLINT magic numbers
-  push_and_print(11);// NOLINT magic numbers
-  remove_and_print(8);// NOLINT magic numbers
-  remove_and_print(6);// NOLINT magic numbers
-  remove_and_print(5);// NOLINT magic numbers
 
   return 0;
 }
