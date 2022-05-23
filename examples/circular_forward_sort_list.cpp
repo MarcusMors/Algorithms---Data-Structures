@@ -52,6 +52,5 @@ int main()
   std::cout << "\n";
   remove_and_print(remove_numbers, list);
 
-
   return 0;
 }

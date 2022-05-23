@@ -61,9 +61,11 @@ template<typename T> struct circular_forward_sort_list
 
   ~circular_forward_sort_list()
   {
-    iterator current_n{ begin() };
-    while (current_n != static_cast<iterator>(&sentinel_node)) {
-      iterator next_n{ current_n->next };
+    if (empty()) { return; }
+
+    forward_node<T> *current_n{ begin() };
+    while (current_n != sentinel_node_ptr) {
+      forward_node<T> *next_n{ current_n->next };
       delete current_n;
       current_n = next_n;
     }
