@@ -105,7 +105,7 @@ template<typename T> struct circular_forward_sort_list
   // [[nodiscard]] decltype(nullptr) cend() const { return nullptr; }
 
   // CAPACITY
-  [[nodiscard]] bool empty() const { return !head; }
+  [[nodiscard]] bool empty() const { return (head == nullptr); }
 
   // MODIFIERS
 

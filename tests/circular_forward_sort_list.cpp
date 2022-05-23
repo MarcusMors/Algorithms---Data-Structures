@@ -17,7 +17,7 @@
 
 #include "catch.hpp"// unit testing library
 // fake std
-#include "../containers/forward_sort_list.hpp"
+#include "../containers/circular_forward_sort_list.hpp"
 // #include "../data/"
 // original std
 #include <algorithm>
@@ -43,7 +43,7 @@ TEST_CASE("forward sort list")
   // INFO("Testing list initialization");
   // initialization
   const std::initializer_list<int> ascendant_init{ -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5 };// NOLINT magic number
-  SECTION("sorted initialization") { fstd::forward_sort_list<int> fstd_list{ ascendant_init }; }
+  SECTION("sorted initialization") { fstd::circular_forward_sort_list<int> fstd_list{ ascendant_init }; }
   SECTION("simple random initialization")
   {
     const std::initializer_list<int> random_init{ 311449302,
@@ -81,18 +81,18 @@ TEST_CASE("forward sort list")
 
     std::vector<int> random_vector_init{ random_init };
     unique_sort_vector(random_vector_init);
-    fstd::forward_sort_list<int> fstd_list{ random_init };
+    fstd::circular_forward_sort_list<int> fstd_list{ random_init };
     check_value_equivalence(fstd_list, random_vector_init);
   }
   // SECTION("absolute random initialization")
   // {
   //   const std::initializer_list<int> sorted_init{ -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5 };
-  //   fstd::forward_sort_list<int> fstd_list{ sorted_init };
+  //   fstd::circular_forward_sort_list<int> fstd_list{ sorted_init };
   // }
   const std::initializer_list<int> descendant_init{ 5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5 };
   SECTION("worst case sorted initialization")
   {
-    fstd::forward_sort_list<int> fstd_list{ descendant_init };
+    fstd::circular_forward_sort_list<int> fstd_list{ descendant_init };
     std::vector<int> descendant_vector{ descendant_init };
     check_value_equivalence(fstd_list, ascendant_init);
   }
@@ -100,10 +100,7 @@ TEST_CASE("forward sort list")
   const std::initializer_list<int> int_init{
     10, -13, 11, 4, 2, -86, 7, 3, 8, -25, 46, 51, 4, 72, 5, -5, -10, 20, 13, -17, -13, -10, 84, 28, 84, 72, 51, 31
   };
-  // const auto *int_init_begin{ int_init.begin() };
-
-  // auto int_init_end{ int_init.end() };
-  fstd::forward_sort_list<int> fstd_list{ int_init };
+  fstd::circular_forward_sort_list<int> fstd_list{ int_init };
   std::vector<int> vector{ int_init };
   unique_sort_vector(vector);
   auto vector_begin = vector.begin();
@@ -133,16 +130,13 @@ TEST_CASE("forward sort list")
     CAPACITY
     ==========================================================================*/
   // INFO("Testing capacity");
-  SECTION("size")
-  {
-    CHECK(fstd_list.size() == vector.size());
-    fstd::forward_sort_list<int> empty_fstd_list;
-    CHECK(empty_fstd_list.size() == 0);
-  }
+
   SECTION("empty")
   {
-    fstd::forward_sort_list<int> empty_list;
+    fstd::circular_forward_sort_list<int> empty_list;
+    const fstd::circular_forward_sort_list<int> const_empty_list;
     CHECK(empty_list.empty());
+    CHECK(const_empty_list.empty());
     CHECK_FALSE(fstd_list.empty());
   }
 
@@ -162,9 +156,11 @@ TEST_CASE("forward sort list")
   SECTION("remove")
   {
     std::vector<int> numbers{ -1, -10, -13, -2, -3, -4, -5, -6 };// NOLINT magic number
-    for (auto num : numbers) { fstd_list.remove(num); }
-
-    unique_sort_vector(vector);
+    for (auto num : numbers) {
+      fstd_list.remove(num);
+      auto v_it{ std::find(vector.begin(), vector.end(), num) };
+      if (v_it != vector.end()) { vector.erase(v_it); }
+    }
     check_value_equivalence(fstd_list, vector);
   }
 }
