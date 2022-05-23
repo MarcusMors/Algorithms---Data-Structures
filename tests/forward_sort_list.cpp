@@ -31,6 +31,12 @@ inline void check_value_equivalence(const container_a &a, const container_b &b)
   auto b_it{ b.begin() };
   for (auto a_it{ a.begin() }; a_it != a.end(); (++a_it, ++b_it)) { CHECK(*a_it == *b_it); }
 }
+template<class T> void unique_sort_vector(vector<T> &t_vector)
+{
+  std::sort(t_vector.begin(), t_vector.end());
+  auto vector_it = std::unique(t_vector.begin(), t_vector.end());
+  t_vector.erase(vector_it, t_vector.end());
+}
 
 TEST_CASE("forward sort list")
 {
@@ -74,9 +80,7 @@ TEST_CASE("forward sort list")
       2016719531 };
 
     std::vector<int> random_vector_init{ random_init };
-    std::sort(random_vector_init.begin(), random_vector_init.end());
-    auto random_vector_it = std::unique(random_vector_init.begin(), random_vector_init.end());
-    random_vector_init.erase(random_vector_it, random_vector_init.end());
+    unique_sort_vector(random_vector_init);
     fstd::forward_sort_list<int> fstd_list{ random_init };
     check_value_equivalence(fstd_list, random_vector_init);
   }
@@ -93,18 +97,22 @@ TEST_CASE("forward sort list")
     check_value_equivalence(fstd_list, ascendant_init);
   }
 
-  const std::initializer_list<int> int_vector{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-  // const auto *int_init_begin{ int_vector.begin() };
-  const auto *int_init_begin{ int_vector.begin() };
+  const std::initializer_list<int> int_init{
+    10, -13, 11, 4, 2, -86, 7, 3, 8, -25, 46, 51, 4, 72, 5, -5, -10, 20, 13, -17, -13, -10, 84, 28, 84, 72, 51, 31
+  };
+  fstd::forward_sort_list<int> fstd_list{ int_init };
+  std::vector<int> vector{ int_init };
+  unique_sort_vector(vector);
+  auto vector_begin = vector.begin();
 
   // auto int_init_end{ int_vector.end() };
-  fstd::forward_sort_list<int> fstd_list{ int_vector };
 
   /*==========================================================================
     ELEMENT ACCESS
     ==========================================================================*/
   // INFO("Testing Element Access");
-  SECTION("element access") { CHECK(fstd_list.front() == *(int_vector.begin())); }
+  SECTION("element access") { CHECK(fstd_list.front() == vector.front()); }
+
   /*==========================================================================
     SCRIPTING and ITERATORS
     ==========================================================================*/
@@ -112,26 +120,31 @@ TEST_CASE("forward sort list")
   SECTION("iteration")
   {
     // INFO("\niterator");
-    for (auto it = fstd_list.begin(); it != fstd_list.end(); (++it, ++int_init_begin)) {
-      REQUIRE(*it == *(int_init_begin));
-    }
+    for (auto it = fstd_list.begin(); it != fstd_list.end(); (++it, ++vector_begin)) { REQUIRE(*it == *vector_begin); }
   }
   SECTION("range-based-for loop")
   {
     for (const auto &elem : fstd_list) {
-      CHECK(elem == *(int_init_begin));
-      ++int_init_begin;
+      CHECK(elem == *(vector_begin));
+      ++vector_begin;
     }
   }
   /*==========================================================================
     CAPACITY
     ==========================================================================*/
   // INFO("Testing capacity");
-  SECTION("size") { CHECK(fstd_list.size() == int_vector.size()); }
+  SECTION("size")
+  {
+    CHECK(fstd_list.size() == vector.size());
+    fstd::forward_sort_list<int> empty_fstd_list;
+    CHECK(empty_fstd_list.size() == 0);
+  }
   SECTION("empty")
   {
-    fstd::forward_sort_list<int> empty_list{};
+    fstd::forward_sort_list<int> empty_list;
+    const fstd::forward_sort_list<int> const_empty_list;
     CHECK(empty_list.empty());
+    CHECK(const_empty_list.empty());
     CHECK_FALSE(fstd_list.empty());
   }
 
@@ -140,16 +153,22 @@ TEST_CASE("forward sort list")
     ==========================================================================*/
   SECTION("insert")
   {
-    std::vector<int> numbers{ -1, -2, -3, -4, -5, -6 };// NOLINT magic number
-    for (auto num : numbers) { fstd_list.insert(num); }
-
-    // check_value_equivalence(fstd_list, std_list);
+    std::vector<int> numbers{ -1, -4, -8, 10, 99, -15, -27, -2, -3, 17, 65, -10, -5, -8 };// NOLINT magic number
+    for (auto num : numbers) {
+      fstd_list.insert(num);
+      vector.push_back(num);
+    }
+    unique_sort_vector(vector);
+    check_value_equivalence(fstd_list, vector);
   }
   SECTION("remove")
   {
-    std::vector<int> numbers{ -1, -2, -3, -4, -5, -6 };// NOLINT magic number
-    for (auto num : numbers) { fstd_list.remove(num); }
-
-    // check_value_equivalence(fstd_list, std_list);
+    std::vector<int> numbers{ -1, -10, -13, -2, -3, -4, -5, -6 };// NOLINT magic number
+    for (auto num : numbers) {
+      fstd_list.remove(num);
+      auto v_it{ std::find(vector.begin(), vector.end(), num) };
+      if (v_it != vector.end()) { vector.erase(v_it); }
+    }
+    check_value_equivalence(fstd_list, vector);
   }
 }
