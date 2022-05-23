@@ -1,3 +1,6 @@
+#ifndef __NODE_H__
+#define __NODE_H__
+
 // Copyright (C) 2022 José Enrique Vilca Campana
 //
 // This program is free software: you can redistribute it and/or modify
@@ -29,3 +32,5 @@ template<typename T> struct node
   explicit node(const node<T> *&n) : next{ n->next }, prev{ n->prev }, value{ n->value } {}
 };
 }// namespace fstd
+
+#endif// __NODE_H__

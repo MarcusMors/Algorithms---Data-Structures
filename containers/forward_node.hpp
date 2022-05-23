@@ -1,3 +1,6 @@
+#ifndef __FORWARD_NODE_H__
+#define __FORWARD_NODE_H__
+
 // Copyright (C) 2022 José Enrique Vilca Campana
 //
 // This program is free software: you can redistribute it and/or modify
@@ -32,3 +35,5 @@ template<typename T> struct forward_node
   forward_node &operator=(forward_node &&) noexcept = default;
 };
 }// namespace fstd
+
+#endif// __FORWARD_NODE_H__
