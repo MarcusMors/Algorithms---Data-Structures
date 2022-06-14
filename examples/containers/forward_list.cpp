@@ -16,7 +16,7 @@
 #include <iostream>
 #include <vector>
 // user defined libraries
-#include "../containers/forward_list.hpp"
+#include "../../containers/forward_list.hpp"
 
 using namespace std;
 using namespace fstd;
@@ -34,18 +34,16 @@ template<class T, class O> void pop_and_print(const T &times, O &out)
 
 int main()
 {
-  // fstd::forward_list<int> list{ 6, 7, 8, 9 };// NOLINT magic numbers
+  fstd::forward_list<int> list{ 6, 7, 8, 9 };// NOLINT magic numbers
   // fstd::forward_list<char> list{ 'a' };// NOLINT magic numbers
-  fstd::forward_list<int> list{ 1 };// NOLINT magic numbers
+  // fstd::forward_list<int> list{ 1 };// NOLINT magic numbers
 
   // std::cout << "size\t: " << list.size() << '\n';
-  std::cout << "list\t: " << list << std::endl;
+  std::cout << "list\t\t: " << list << "\n";
+  std::cout << "iteration\t: ";
+  for (auto it = list.begin(); it != list.end(); ++it) { std::cout << *it << ", "; }// NOLINT modern range for loop
 
-  std::cout << "\niteration" << std::endl;
-  for (auto i = list.begin(); i != list.end(); ++i) { std::cout << *i << ", "; }// NOLINT modern range for loop
-
-  std::cout << "\n";
-  std::cout << "<--- MODIFIERS --->\n";
+  std::cout << "\n<--- MODIFIERS --->\n";
   // vector<int> numbers{ 5, 4, 3, 2, 1, 0 };// NOLINT magic numbers
 
   const std::size_t new_size{ 2 };// NOLINT magic numbers

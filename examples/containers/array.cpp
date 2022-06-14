@@ -15,7 +15,7 @@
 
 #include <iostream>
 // user defined libraries
-#include "../STD-containers/array.hpp"
+#include "../../STD-containers/array.hpp"
 
 using namespace std;
 

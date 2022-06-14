@@ -12,52 +12,43 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 #include <iostream>
 #include <vector>
 // user defined libraries
-#include "../containers/forward_sort_list.hpp"
+#include "../../containers/bin_search_tree.hpp"
 
-using namespace std;
-
-template<class T, class O> void insert_and_print(const vector<T> &in, O &out)
+template<class T, class O> void insert_and_print(const std::vector<T> &in, O &out)
 {
   for (const auto &elem : in) { out.insert(elem); }
-  cout << out << endl;
+  std::cout << out << std::endl;
 }
-template<class T, class O> void remove_and_print(const vector<T> &in, O &out)
+template<class T, class O> void remove_and_print(const std::vector<T> &in, O &out)
 {
   for (const auto &elem : in) { out.remove(elem); }
-  cout << out << endl;
+  std::cout << out << std::endl;
 }
 
 int main()
 {
-  fstd::forward_sort_list<int> list{ 1, 5, 17, 5, 12, 15, 20, 32, 32 };// NOLINT magic numbers
-  // fstd::forward_sort_list<int> list{ 1, 2 };// NOLINT magic numbers
+  fstd::bin_search_tree<int, false> BST;
+  // fstd::bin_search_tree<int> BST{ 10, 1, 6, 8, 3, 0, 14, 20, 21 };// NOLINT magic numbers
 
-  // std::cout << "size\t: " << list.size() << '\n';
-  std::cout << "list\t: " << list << std::endl;
-
-  std::cout << "\niteration" << std::endl;
-  for (auto i = list.begin(); i != list.end(); ++i) { std::cout << *i << ", "; }// NOLINT modern range for loop
+  // std::cout << "BST\t: " << BST << std::endl;
 
   std::cout << "\n<--- MODIFIERS --->\n";
-  vector<int> insert_numbers{ 10, 23, 14, 16, 2, 15, 10, 20 };// NOLINT magic numbers
-  vector<int> remove_numbers{ 5, 1, 8, 10, 11, 14, 17, 20, 15 };// NOLINT magic numbers
+  std::vector<int> insert_numbers{ 10, 23, 14, 16, 2, 15, 10, 20 };// NOLINT magic numbers
+  std::vector<int> remove_numbers{ 5, 1, 8, 10, 11, 14, 17, 20, 15 };// NOLINT magic numbers
 
-  std::cout << "insert : ";
+  std::cout << "\ninsert : ";
   for (const auto &elem : insert_numbers) { std::cout << elem << ", " << std::flush; }
   std::cout << "\n";
 
-  insert_and_print(insert_numbers, list);
+  insert_and_print(insert_numbers, BST);
 
-  std::cout << "\n";
-  std::cout << "remove : ";
+  std::cout << "\nremove : ";
   for (const auto &elem : remove_numbers) { std::cout << elem << ", " << std::flush; }
   std::cout << "\n";
-  remove_and_print(remove_numbers, list);
-
+  remove_and_print(remove_numbers, BST);
 
   return 0;
 }
