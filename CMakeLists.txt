@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 3.18)
+include(CheckIPOSupported)
+check_ipo_supported(RESULT supported OUTPUT error)
+add_executable(test file1.cpp file2.cpp impl.cpp)
+set_property(TARGET test PROPERTY INTERPROCEDURAL_OPTIMIZATION TRUE)

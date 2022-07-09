@@ -1,5 +1,3 @@
-#ifndef __LIST_H__
-#define __LIST_H__
 
 // Copyright (C) 2022 José Enrique Vilca Campana
 //
@@ -21,36 +19,47 @@
 #include <iostream>
 #include <limits>
 // fake library
-#include "node.hpp"
+#include "./bin_node.hpp"
 
 using namespace std;
 
 namespace fstd {
-using fstd::node;
+using fstd::bin_node;
 
-template<typename T> struct list
+template<typename T> struct bin_tree
 {
   using value_type = T;
-  using size_type = std::size_t;
   class iterator;
   using const_iterator = const iterator;
 
-  list() = default;
-  // cppcheck-suppress noExplicitConstructor ; allowing list A = {1,2,3} and A{1,2,3}
-  list(std::initializer_list<T> init) : sz{ init.size() }, head{ new node<T>(*init.begin()) }
+  bin_tree() = default;
+  // cppcheck-suppress noExplicitConstructor ; allowing bin_tree A = {1,2,3} and A{1,2,3}
+  bin_tree(const std::initializer_list<T> init)
   {
-    iterator nav{ head };
-    for (auto i = init.begin() + 1; i != init.end(); ++i) {
-      nav->next = new node<T>(*i);
-      nav->next->prev = nav;
-      ++nav;
+
+    int count{ 0 };
+    int level_count{ 1 };
+
+    bin_node<T> *prev_node;
+    for (auto it = init.begin() + 1; it != init.end(); ++it) {
+      bin_node<T> *current = new bin_node<T>(*it);
+      const bool complete = (count == level_count);
+      if (complete) {
+        current->left = prev_node;
+        // from 0001 to 0011, from 1 to 3, to 5, to 9, ...
+        level_count = level_count << 1;
+        level_count = level_count | 1;
+      } else {
+        prev_node->right = current;
+      }
+      prev_node = current;
+      ++count;
     }
-    tail = nav;
   }
-  list(const list &l) : head{ l.head }, tail{ l.tail } {}
+  bin_tree(const bin_tree &l) : root{ l.root }, tail{ l.tail } {}
 
 
-  ~list()
+  ~bin_tree()
   {
     iterator current_n{ begin() };
     while (current_n) {
@@ -59,16 +68,21 @@ template<typename T> struct list
       current_n = next_n;
     }
   }
+
+  // constructor helpers
+
+  // constructor helpers
+
   //  ELEMENT ACCESS
-  T front() const { return head->value; }
+  T front() const { return root->value; }
   T back() const { return tail->value; }
 
   // ITERATORS
-  iterator begin() { return head; }
+  iterator begin() { return root; }
   iterator end() { return iterator{ nullptr }; }
-  const_iterator begin() const { return head; }
+  const_iterator begin() const { return root; }
   const_iterator end() const { return iterator{ nullptr }; }
-  const_iterator cbegin() const { return head; }
+  const_iterator cbegin() const { return root; }
   const_iterator cend() const { return const_iterator{ nullptr }; }
   iterator rbegin() { return tail; }
   iterator rend() { return iterator{ nullptr }; }
@@ -77,7 +91,7 @@ template<typename T> struct list
 
   // CAPACITY
   size_type size() { return sz; }
-  [[nodiscard]] bool empty() const { return (sz == 0 && !tail && !head); }
+  [[nodiscard]] bool empty() const { return (sz == 0 && !tail && !root); }
   size_type max_size() { return std::numeric_limits<size_type>::max(); }
 
   // MODIFIERS
@@ -97,7 +111,7 @@ template<typename T> struct list
   // - T must meet the requirements of DefaultInsertable in order to use overload (1).
   // - T must meet the requirements of CopyInsertable in order to use overload (2).
   void resize(const size_type &new_size);// CopyInsertable
-  void swap(list &);
+  void swap(bin_tree &);
 
   // OPERATIONS
   // merge
@@ -109,17 +123,17 @@ template<typename T> struct list
   // sort
 
   // OPERATORS
-  list &operator=(const list l)
+  bin_tree &operator=(const bin_tree l)
   {
     sz = l.sz;
-    head = l.head;
+    root = l.root;
     tail = l.tail;
     return *this;
   }
 
 private:
   size_type sz{ 0 };
-  iterator head{ nullptr };
+  iterator root{ nullptr };
   iterator tail{ nullptr };
 };
 
@@ -135,12 +149,12 @@ private:
 // erase_if
 
 
-template<typename T> class list<T>::iterator
+template<typename T> class bin_tree<T>::iterator
 {
-  node<T> *curr;
+  bin_node<T> *curr;
 
 public:
-  explicit iterator(node<T> *p) : curr{ p } {}
+  explicit iterator(bin_node<T> *p) : curr{ p } {}
   iterator(const iterator &it) : curr{ it.curr } {}
 
   iterator &operator++()
@@ -170,33 +184,33 @@ public:
   }
 
   T &operator*() const { return curr->value; }// dereference
-  node<T> *operator->() const { return curr; }// member of pointer
+  bin_node<T> *operator->() const { return curr; }// member of pointer
   iterator &operator=(const iterator &it)
   {
     curr = it.curr;
     return *this;
   }
-  iterator operator=(node<T> *const &it)
+  iterator operator=(bin_node<T> *const &it)
   {
     curr = it;
     return *this;
   }
 
   operator bool() const { return curr; }
-  operator node<T> *() const { return curr; }
+  operator bin_node<T> *() const { return curr; }
   bool operator==(const iterator &rhs) const { return curr == rhs.curr; }
   bool operator!=(const iterator &rhs) const { return curr != rhs.curr; }
 };
 
-template<typename T> ostream &operator<<(std::ostream &os, const list<T> &t_list)
+template<typename T> ostream &operator<<(std::ostream &os, const bin_tree<T> &t_list)
 {
   for (auto &&elem : t_list) { os << elem << ", "; }
   return os;
 }
 //
 //
-// template<class T> ostream &operator<<(std::ostream &os, const node<T> &t_node) { return os << t_node.value; }
-// template<class T> ostream &operator<<(std::ostream &os, const node<T> *t_node) { return os << t_node->value; }
+// template<class T> ostream &operator<<(std::ostream &os, const bin_node<T> &t_node) { return os << t_node.value; }
+// template<class T> ostream &operator<<(std::ostream &os, const bin_node<T> *t_node) { return os << t_node->value; }
 
 
 }// namespace fstd
@@ -214,11 +228,11 @@ template<typename T> ostream &operator<<(std::ostream &os, const list<T> &t_list
 // insert
 // emplace
 // erase
-template<class T> void fstd::list<T>::push_back(const T t_value)
+template<class T> void fstd::bin_tree<T>::push_back(const T t_value)
 {
-  iterator temp{ new node<T>(t_value) };
+  iterator temp{ new bin_node<T>(t_value) };
   if (empty()) {
-    head = tail = temp;
+    root = tail = temp;
   } else {
     tail->next = temp;
     temp->prev = tail;
@@ -228,7 +242,7 @@ template<class T> void fstd::list<T>::push_back(const T t_value)
 }
 
 
-template<class T> void fstd::list<T>::pop_back()
+template<class T> void fstd::bin_tree<T>::pop_back()
 {
   const iterator current_n{ tail };
   tail = tail->prev;
@@ -237,20 +251,20 @@ template<class T> void fstd::list<T>::pop_back()
   --sz;
 }
 
-template<class T> void fstd::list<T>::push_front(const T t_value)
+template<class T> void fstd::bin_tree<T>::push_front(const T t_value)
 {
-  node<T> *temp{ new node<T>(t_value) };
-  temp->next = head;
-  head->prev = temp;
-  head = temp;
+  bin_node<T> *temp{ new bin_node<T>(t_value) };
+  temp->next = root;
+  root->prev = temp;
+  root = temp;
   ++sz;
 }
 // emplace front
 
-template<class T> void fstd::list<T>::pop_front()
+template<class T> void fstd::bin_tree<T>::pop_front()
 {
-  head = head->next;
-  delete head->prev;
+  root = root->next;
+  delete root->prev;
   --sz;
 }
 
@@ -260,7 +274,7 @@ template<class T> void fstd::list<T>::pop_front()
 // Type requirements
 // - T must meet the requirements of DefaultInsertable in order to use overload (1).
 // - T must meet the requirements of CopyInsertable in order to use overload (2).
-template<class T> void fstd::list<T>::resize(const size_type &new_size)// CopyInsertable  // needs testing
+template<class T> void fstd::bin_tree<T>::resize(const size_type &new_size)// CopyInsertable  // needs testing
 {
   // static_assert(new_size > 0);
   const auto delete_nodes = [&]() {
@@ -277,7 +291,7 @@ template<class T> void fstd::list<T>::resize(const size_type &new_size)// CopyIn
   const auto create_nodes = [&]() {
     // while (sz < new_size) {
     //   cout << "create" << endl;
-    //   tail->next = new node<T>(T{}, nullptr, tail);
+    //   tail->next = new bin_node<T>(T{}, nullptr, tail);
     //   ++tail;
     //   ++sz;
     // }
@@ -286,9 +300,9 @@ template<class T> void fstd::list<T>::resize(const size_type &new_size)// CopyIn
 
   (new_size < sz) ? delete_nodes() : create_nodes();
 }
-template<class T> void fstd::list<T>::swap(list &t_list)
+template<class T> void fstd::bin_tree<T>::swap(bin_tree &t_list)
 {
-  list temp{ *this };
+  bin_tree temp{ *this };
   *this = t_list;
   t_list = temp;
 }
@@ -302,5 +316,3 @@ template<class T> void fstd::list<T>::swap(list &t_list)
 //   b->prev = temp->prev;
 //   b->next = temp->next;
 // }
-
-#endif// __LIST_H__

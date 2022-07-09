@@ -44,19 +44,19 @@ int main()
   for (auto it = list.begin(); it != list.end(); ++it) { std::cout << *it << ", "; }// NOLINT modern range for loop
 
   std::cout << "\n<--- MODIFIERS --->\n";
-  // vector<int> numbers{ 5, 4, 3, 2, 1, 0 };// NOLINT magic numbers
+  vector<int> numbers{ 5, 4, 3, 2, 1, 0 };// NOLINT magic numbers
 
-  const std::size_t new_size{ 2 };// NOLINT magic numbers
-  std::cout << "size : " << list.size() << "\tnew size : " << new_size << std::endl;
-  list.resize(new_size);
-  for (const auto &elem : list) { std::cout << elem << ", " << std::flush; }
-  std::cout << std::endl;
+  // const std::size_t new_size{ 2 };// NOLINT magic numbers
+  // std::cout << "size : " << list.size() << "\tnew size : " << new_size << std::endl;
+  // list.resize(new_size);
+  // for (const auto &elem : list) { std::cout << elem << ", " << std::flush; }
+  // std::cout << std::endl;
 
-  // std::cout << list << std::endl;
-  // push_and_print(numbers, list);
+  std::cout << list << std::endl;
+  push_and_print(numbers, list);
 
-  // int pop_front_times{ 5 };// NOLINT magic numbers
-  // pop_and_print(pop_front_times, list);
+  int pop_front_times{ 5 };// NOLINT magic numbers
+  pop_and_print(pop_front_times, list);
   // resize
 
 

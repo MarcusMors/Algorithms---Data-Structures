@@ -15,9 +15,9 @@
 
 #define CATCH_CONFIG_MAIN// This tells Catch to provide a main() - only do this in one cpp file
 
-#include "catch.hpp"// unit testing library
+#include "../catch.hpp"// unit testing library
 // fake std
-#include "../containers/forward_sort_list.hpp"
+#include "../../containers/forward_sort_list.hpp"
 // #include "../data/"
 // original std
 #include <algorithm>
@@ -26,10 +26,10 @@
 #include <vector>
 
 template<class container_a, class container_b>
-inline void check_value_equivalence(const container_a &a, const container_b &b)
+inline void check_value_equivalence(const container_a &t_a, const container_b &t_b)
 {
-  auto b_it{ b.begin() };
-  for (auto a_it{ a.begin() }; a_it != a.end(); (++a_it, ++b_it)) { CHECK(*a_it == *b_it); }
+  auto b_it{ t_b.begin() };
+  for (auto a_it{ t_a.begin() }; a_it != t_a.end(); (++a_it, ++b_it)) { CHECK(*a_it == *b_it); }
 }
 template<class T> void unique_sort_vector(vector<T> &t_vector)
 {

@@ -15,9 +15,9 @@
 
 #define CATCH_CONFIG_MAIN// This tells Catch to provide a main() - only do this in one cpp file
 
-#include "catch.hpp"// unit testing library
+#include "../catch.hpp"// unit testing library
 // fake std
-#include "../containers/circular_forward_sort_list.hpp"
+#include "../../containers/circular_forward_sort_list.hpp"
 // #include "../data/"
 // original std
 #include <algorithm>
@@ -46,7 +46,8 @@ TEST_CASE("forward sort list")
   SECTION("sorted initialization") { fstd::circular_forward_sort_list<int> fstd_list{ ascendant_init }; }
   SECTION("simple random initialization")
   {
-    const std::initializer_list<int> random_init{ 311449302,
+    const std::initializer_list<int> random_init{
+      311449302,
       1499859198,
       1773212879,
       -1594163627,
@@ -77,7 +78,8 @@ TEST_CASE("forward sort list")
       171312327,
       -526963543,
       -347740478,
-      2016719531 };
+      2016719531,
+    };
 
     std::vector<int> random_vector_init{ random_init };
     unique_sort_vector(random_vector_init);
