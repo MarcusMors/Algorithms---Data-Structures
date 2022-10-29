@@ -13,22 +13,27 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "./node/array_node.hpp"
+#include "./node/bin_node.hpp"
 
 namespace fstd {
-class binary_search_tree
+
+template<class T> class binary_search_tree
 {
 public:
-  using node_type = node;
+  using node_type = bin_node<T>;
+  // using size_type = std::size_t;
+  using value_type = T;
 
 private:
   // root
+  node_type *root{};
+
 public:
-  binary_search_tree(/* args */);
+  binary_search_tree();
   ~binary_search_tree();
 };
 
-binary_search_tree::binary_search_tree(/* args */) {}
+binary_search_tree::binary_search_tree() {}
 
 binary_search_tree::~binary_search_tree() {}
 

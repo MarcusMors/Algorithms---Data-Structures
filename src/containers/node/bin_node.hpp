@@ -14,22 +14,19 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace fstd {
-struct bin_node
+template<typename T> struct bin_node
 {
-  template<typename T> struct bin_node
-  {
-    T value;
-    bin_node<T> *prev{ nullptr };
-    bin_node<T> *next{ nullptr };
+  using value_type = T;
+  T value;
+  bin_node<T> *nodes[2];
+  bin_node<T> *&left = nodes[0];
+  bin_node<T> *&right = nodes[1];
 
-    bin_node() = default;
-    ~bin_node() = default;
-    explicit bin_node(const T v) : value{ v } {}// NOLINT
-    bin_node(const T v, bin_node<T> *n, bin_node<T> *p) : value{ v }, next{ n }, prev{ p } {}// NOLINT
-    bin_node(const bin_node<T> &n) : next{ n.next }, prev{ n.prev }, value{ n.value } {}
-    bin_node(const bin_node<T> &&n) noexcept : next{ n.next }, prev{ n.prev }, value{ n.value } {}
-    explicit bin_node(const bin_node<T> *&n) : next{ n->next }, prev{ n->prev }, value{ n->value } {}
-  };
+  bin_node() = default;
+  ~bin_node() = default;
+
+  explicit bin_node(const T v) : value{ v } {}// NOLINT
+  bin_node(const T v, bin_node<T> *l, bin_node<T> *r) : value{ v }, left{ l }, right{ r } {}// NOLINT
 };
 
 }// namespace fstd
