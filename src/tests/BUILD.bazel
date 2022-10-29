@@ -1,0 +1,51 @@
+# Copyright (C) 2022 José Enrique Vilca Campana
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+#--benchmark_repetitions=<n_of_repetitions>"
+cc_test(
+  name = "alex_performance_tests",
+  srcs = ["performance/alex_merge_sort.cpp"],
+  deps = [
+    "//src/alex:lib_alex",
+    "//src/tests/utils:lib_utils_vector",
+    "@com_google_benchmark//:benchmark_main",
+    ]
+)
+
+cc_test(
+  name = "monolito_alex_performance_tests",
+  srcs = ["performance/monolito_alex_merge_sort.cpp"],
+  deps = [
+    "@com_google_benchmark//:benchmark_main",
+    ]
+)
+
+# cc_test(
+#   name = "monolito_christian_bms",
+#   srcs = ["performance/monolito_christian_merge_sort.cpp"],
+#   deps = [
+#     "@com_google_benchmark//:benchmark_main",
+#     ]
+# )
+cc_test(
+  name = "helper_google_BM_test",
+  srcs = ["performance/helper_google_BM_test.cpp"],
+  deps = [
+    "@com_google_benchmark//:benchmark_main",
+    ]
+)
+
+
+

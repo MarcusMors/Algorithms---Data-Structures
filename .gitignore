@@ -1,7 +1,19 @@
+# performance testing Files
+*.png
+*.jpg
+
+# Built Files
+build
+bazel-*
+
+# vscode shit
+.pytest_cache
+
 # generated data files
 data/GD*
 
 # helpers
+HW_files
 mock
 *helper*
 *aux*
