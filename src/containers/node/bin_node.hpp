@@ -1,3 +1,6 @@
+#ifndef __BIN_NODE_H__
+#define __BIN_NODE_H__
+
 // Copyright (C) 2022 José Enrique Vilca Campana
 //
 // This program is free software: you can redistribute it and/or modify
@@ -14,11 +17,13 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace fstd {
+
 template<typename T> struct bin_node
 {
+
   using value_type = T;
   T value;
-  bin_node<T> *nodes[2];
+  bin_node<T> *nodes[2]{};
   bin_node<T> *&left = nodes[0];
   bin_node<T> *&right = nodes[1];
 
@@ -30,3 +35,5 @@ template<typename T> struct bin_node
 };
 
 }// namespace fstd
+
+#endif// __BIN_NODE_H__

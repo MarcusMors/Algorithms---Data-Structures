@@ -234,7 +234,7 @@ template<class T> void fstd::forward_list<T>::resize(const size_type &new_size)/
   };
   const auto create_nodes = [&]() {
     const int new_nodes_size{ new_size - sz };// value range [1, numeric_limits<int>::max() )
-    forward_node<T> *new_nodes = new forward_node<T>[new_nodes_size];
+    auto *new_nodes = new forward_node<T>[new_nodes_size];
 
     auto nav{ begin() };
     int current = 0;

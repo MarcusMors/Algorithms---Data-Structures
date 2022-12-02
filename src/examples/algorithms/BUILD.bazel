@@ -13,8 +13,10 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+load("@rules_cc//cc:defs.bzl", "cc_binary")
+
 cc_binary(
-  name = "merge_sort",
-  srcs = ["merge_sort.cpp"],
-  deps = ["//src/algorithms:lib_merge_sort"],
+    name = "merge_sort",
+    srcs = ["merge_sort.cpp"],
+    deps = ["//src/algorithms:lib_merge_sort"],
 )

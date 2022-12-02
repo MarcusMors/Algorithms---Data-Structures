@@ -169,7 +169,7 @@ template<class T> bool fstd::forward_sort_list<T>::insert(const T t_value)
   // iterator *ptr;// NOLINT not initialized
   forward_node<T> **ptr;// NOLINT not initialized
   if (find(t_value, ptr)) { return false; }
-  forward_node<T> *new_node = new forward_node<T>(t_value, *ptr);
+  auto *new_node = new forward_node<T>(t_value, *ptr);
   *ptr = new_node;
   ++sz;
   return true;

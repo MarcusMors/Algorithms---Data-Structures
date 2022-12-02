@@ -15,13 +15,12 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
-## Examples A to last letter
+# Examples A to last letter
 
-### Simple
+## Simple
 
 Best path: A->B->D->E
 weights: 3->5->15 = 33
-
 
 ```mermaid
 graph LR
@@ -52,13 +51,11 @@ graph LR
     E --- |5|F
 ```
 
-
-
-
-### Medium
+## Medium
 
 Best path: A->C->H->I
 weights: 7->10->15 = 32
+
 ```mermaid
 graph LR
     A --- |3|B
@@ -79,7 +76,6 @@ graph LR
 
     H --- |15|I
 ```
-
 
 ```mermaid
 graph LR
@@ -106,5 +102,3 @@ graph LR
 
     H --- |16|I
 ```
-
-

@@ -21,35 +21,40 @@
 template<class T, class O> void insert_and_print(const std::vector<T> &in, O &out)
 {
   for (const auto &elem : in) { out.insert(elem); }
-  std::cout << out << std::endl;
+  // std::cout << out << std::endl;
+  out.in_order_traversal();
 }
 template<class T, class O> void remove_and_print(const std::vector<T> &in, O &out)
 {
   for (const auto &elem : in) { out.remove(elem); }
-  std::cout << out << std::endl;
+  // std::cout << out << std::endl;
+  out.in_order_traversal();
 }
 
 int main()
 {
-  fstd::bin_search_tree<int, false> BST;
-  // fstd::bin_search_tree<int> BST{ 10, 1, 6, 8, 3, 0, 14, 20, 21 };// NOLINT magic numbers
+  fstd::bin_search_tree<int> BST{ 0 };
+  // BST.in_order_traversal();
+  BST.insert(1);
+  BST.in_order_traversal();
+  // // fstd::bin_search_tree<int> BST{ 10, 1, 6, 8, 3, 0, 14, 20, 21 };// NOLINT magic numbers
 
-  // std::cout << "BST\t: " << BST << std::endl;
+  // // std::cout << "BST\t: " << BST << std::endl;
 
-  std::cout << "\n<--- MODIFIERS --->\n";
-  std::vector<int> insert_numbers{ 10, 23, 14, 16, 2, 15, 10, 20 };// NOLINT magic numbers
-  std::vector<int> remove_numbers{ 5, 1, 8, 10, 11, 14, 17, 20, 15 };// NOLINT magic numbers
+  // std::cout << "\n<--- MODIFIERS --->\n";
+  // std::vector<int> insert_numbers{ 10, 23, 14, 16, 2, 15, 10, 20 };// NOLINT magic numbers
+  // std::vector<int> remove_numbers{ 5, 1, 8, 10, 11, 14, 17, 20, 15 };// NOLINT magic numbers
 
-  std::cout << "\ninsert : ";
-  for (const auto &elem : insert_numbers) { std::cout << elem << ", " << std::flush; }
-  std::cout << "\n";
+  // std::cout << "\ninsert : ";
+  // for (const auto &elem : insert_numbers) { std::cout << elem << ", " << std::flush; }
+  // std::cout << "\n";
 
-  insert_and_print(insert_numbers, BST);
+  // insert_and_print(insert_numbers, BST);
 
-  std::cout << "\nremove : ";
-  for (const auto &elem : remove_numbers) { std::cout << elem << ", " << std::flush; }
-  std::cout << "\n";
-  remove_and_print(remove_numbers, BST);
+  // std::cout << "\nremove : ";
+  // for (const auto &elem : remove_numbers) { std::cout << elem << ", " << std::flush; }
+  // std::cout << "\n";
+  // remove_and_print(remove_numbers, BST);
 
-  return 0;
+  // return 0;
 }

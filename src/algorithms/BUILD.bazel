@@ -20,12 +20,14 @@
 #   visibility = ["//visibility:public"],
 # )
 
+load("@rules_cc//cc:defs.bzl", "cc_library")
+
 cc_library(
-  name = "lib_merge_sort",
-  # srcs = ["sort/merge_sort.cpp"],
-  # hdrs = glob(["algorithms/GAAAAAAAAAAAAAH/sort/merge_sort.hpp"]),
-  hdrs = ["sort/merge_sort.hpp"],
-  # hdrs = ["**/merge_sort.hpp"],
-  # hdrs = ["merge_sort.hpp"],
-  visibility = ["//visibility:public"],
+    name = "lib_merge_sort",
+    # srcs = ["sort/merge_sort.cpp"],
+    # hdrs = glob(["algorithms/GAAAAAAAAAAAAAH/sort/merge_sort.hpp"]),
+    hdrs = ["sort/merge_sort.hpp"],
+    # hdrs = ["**/merge_sort.hpp"],
+    # hdrs = ["merge_sort.hpp"],
+    visibility = ["//visibility:public"],
 )
