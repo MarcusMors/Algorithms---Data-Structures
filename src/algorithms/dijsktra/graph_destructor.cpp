@@ -218,50 +218,63 @@ int main()
   using node_value_type = char;
   using edge_value_type = int;
 
-  graph<node_value_type, edge_value_type> a_graph;
-  std::vector<node_value_type> a_node_input{ 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i' };
-  std::vector<edge_value_type> a_edge_input{ 3, 7, 2, 5, 8, 9, 10, 2, 14, 16, 4, 0 };// NOLINT magic number
+  graph<node_value_type, edge_value_type> g;
+  std::vector<node_value_type> node_v{
+    'a',// 0
+    'b',// 1
+    'c',// 2
+    'd',// 3
+    'e',// 4
+    'f',// 5
+    'g',// 6
+    'h',// 7
+    'i',// 8
+  };
+  // std::vector<node_value_type> node_v{  };
+  // std::vector<edge_value_type> a_edge_input{ 3, 7, 2, 5, 8, 9, 10, 2, 14, 16, 4, 0 };// NOLINT magic number
 
 
-  for (auto node_value : a_node_input) { a_graph.InsertNode(node_value); }
-  cout << a_graph << endl;
+  for (auto node_value : node_v) { g.InsertNode(node_value); }
+  cout << g << endl;
 
-  a_graph.InsertEdge(a_graph.nodes[0], a_graph.nodes[1], 3);
-  a_graph.InsertEdge(a_graph.nodes[0], a_graph.nodes[2], 7);
-  a_graph.InsertEdge(a_graph.nodes[0], a_graph.nodes[3], 2);
+  g.InsertEdge(g.nodes[0], g.nodes[1], 3);
+  g.InsertEdge(g.nodes[0], g.nodes[2], 7);
+  g.InsertEdge(g.nodes[0], g.nodes[3], 2);
 
-  a_graph.InsertEdge(a_graph.nodes[1], a_graph.nodes[4], 5);
-  a_graph.InsertEdge(a_graph.nodes[1], a_graph.nodes[5], 8);
+  g.InsertEdge(g.nodes[1], g.nodes[4], 5);
+  g.InsertEdge(g.nodes[1], g.nodes[5], 8);
 
 
-  a_graph.InsertEdge(a_graph.nodes[4], a_graph.nodes[7], 44);
-  a_graph.InsertEdge(a_graph.nodes[5], a_graph.nodes[2], 55);
+  g.InsertEdge(g.nodes[4], g.nodes[7], 44);
+  g.InsertEdge(g.nodes[5], g.nodes[2], 55);
 
-  a_graph.InsertEdge(a_graph.nodes[2], a_graph.nodes[3], 9);
-  a_graph.InsertEdge(a_graph.nodes[2], a_graph.nodes[7], 10);
+  g.InsertEdge(g.nodes[2], g.nodes[3], 9);
+  g.InsertEdge(g.nodes[2], g.nodes[7], 10);
 
-  a_graph.InsertEdge(a_graph.nodes[6], a_graph.nodes[7], 2);
-  a_graph.InsertEdge(a_graph.nodes[6], a_graph.nodes[8], 14);
+  g.InsertEdge(g.nodes[6], g.nodes[7], 2);
+  g.InsertEdge(g.nodes[6], g.nodes[8], 14);
 
-  a_graph.InsertEdge(a_graph.nodes[7], a_graph.nodes[8], 16);
+  g.InsertEdge(g.nodes[7], g.nodes[8], 16);
 
-  // dijkstra(a_graph, a_graph.nodes.begin(), a_graph.nodes.back());
+  // dijkstra(g, g.nodes.begin(), g.nodes.back());
   edge_value_type weight{ 0 };
 
-  // using graph_type = graph<node_value_type, edge_value_type>::graph_type;
+  using graph_type = graph<node_value_type, edge_value_type>::graph_type;
   // using node_type = graph<node_value_type, edge_value_type>::node_type;
   // using edge_type = graph<node_value_type, edge_value_type>::edge_type;
 
-  // std::list<node<node_value_type> *> best_path =
-  //   dijkstra<graph_type>(a_graph.nodes.front(), a_graph.nodes.back(), weight);
-  // std::list<node<node_value_type> *> best_path =
-  //   dijkstra<node_type, edge_type>(a_graph.nodes.front(), a_graph.nodes.back(), weight);
-  cout << a_graph << endl;
+  std::list<node<node_value_type> *> best_path =//
+    dijkstra<graph_type>(g.nodes.front(), g.nodes.back(), weight);
+
+  // std::list<node<node_value_type> *> best_path =//
+  //   dijkstra<node_type, edge_type>(g.nodes.front(), g.nodes.back(), weight);
+
+  cout << g << endl;
 
   // std::list<node<graph<node_value_type, edge_value_type>> *> best_path =
-  //   // dijkstra<node_value_type, edge_value_type>(a_graph.nodes.front(), a_graph.nodes.back(), weight);
-  //   dijkstra<node_value_type, edge_value_type>(a_graph.nodes.front(), a_graph.nodes.back(), weight);
+  //   // dijkstra<node_value_type, edge_value_type>(g.nodes.front(), g.nodes.back(), weight);
+  //   dijkstra<node_value_type, edge_value_type>(g.nodes.front(), g.nodes.back(), weight);
 
-  // for (auto *node : best_path) { cout << node << "-> " << endl; }
-  // for (auto node : best_path) { cout << node->value << "-> " << endl; }// POSSIBLE
+  for (auto *node : best_path) { cout << node << "-> " << endl; }
+  for (auto node : best_path) { cout << node->value << "-> " << endl; }// POSSIBLE
 }

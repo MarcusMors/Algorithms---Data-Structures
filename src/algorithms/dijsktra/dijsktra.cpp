@@ -17,6 +17,7 @@
 #include <limits>
 #include <list>
 #include <set>
+#include <string>
 #include <vector>
 
 using namespace std;
@@ -91,7 +92,7 @@ public:
     return true;
   }
 
-  bool InsertEdge(node_type *t_a, node_type *t_b, edge_value_type t_e, bool t_direction = false)
+  bool insert_edge(node_type *t_a, node_type *t_b, edge_value_type t_e, bool t_direction = false)
   {
     new edge_type(t_a, t_b, t_e, t_direction);
     return true;
@@ -219,6 +220,22 @@ std::ostream &operator<<(std::ostream &os, graph<node_value_type, edge_value_typ
   return os;
 }
 
+template<class graph_type>
+string insert_edge(graph_type a_graph,
+  node<graph_type> *a,
+  node<graph_type> *b,
+  typename graph_type::edge_value_type value,
+  bool last_one = false)
+{
+  a_graph.insert_edge(a, b, value);
+  if (last_one) {
+    return string{ R"({"from":")" } + string{ a->value } + string{ R"(","to":")" }//
+           + string{ b->value } + string{ "\"}]}" };
+  }
+  return string{ R"({"from":")" } + string{ a->value } + string{ R"(","to":")" }//
+         + string{ b->value } + string{ R"("},)" };
+}
+
 
 int main()
 {
@@ -229,60 +246,87 @@ int main()
 
   graph<node_value_type, edge_value_type> a_graph;
   std::vector<node_value_type> a_node_input{ 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i' };
-  std::vector<edge_value_type> a_edge_input{ 3, 7, 2, 5, 8, 9, 10, 2, 14, 16, 4, 0 };// NOLINT magic number
 
-  // simple case
-  // a_graph.InsertEdge(a, b, 3);
-  // a_graph.InsertEdge(a, c, 7);
-  // a_graph.InsertEdge(a, d, 2);
+  string my_graph_json{ R"({"kind":{"graph":true},)" };
+  string nodes_json{ R"("nodes":[)" };
+  string edges_json{ R"("edges":[)" };
+  // "\"edges\":[{\"from\":\"1\",\"to\":\"2\"}]}";
 
-  for (auto node_value : a_node_input) { a_graph.InsertNode(node_value); }
+  // for (auto node_value : a_node_input) { a_graph.InsertNode(node_value); }
+  for (size_t i = 0; i < a_node_input.size() - 1; i++) {
+    auto node_value = a_node_input[i];
+    a_graph.InsertNode(node_value);
+    nodes_json += "{\"id\": \"" + string{ node_value } + "\"},";
+  }
+  {
+    auto node_value = a_node_input.back();
+    a_graph.InsertNode(node_value);
+    nodes_json += "{\"id\": \"" + string{ node_value } + "\"}],";
+  }
 
-  node_type *&a = a_graph.nodes[0];// NOLINT
-  node_type *&b = a_graph.nodes[1];// NOLINT
-  node_type *&c = a_graph.nodes[2];// NOLINT
-  node_type *&d = a_graph.nodes[3];// NOLINT
-  node_type *&e = a_graph.nodes[4];// NOLINT
-  node_type *&f = a_graph.nodes[5];// NOLINT
-  node_type *&g = a_graph.nodes[6];// NOLINT
-  node_type *&h = a_graph.nodes[7];// NOLINT
-  node_type *&i = a_graph.nodes[8];// NOLINT
+
+  node_type *&a = a_graph.nodes[0];
+  node_type *&b = a_graph.nodes[1];
+  node_type *&c = a_graph.nodes[2];
+  node_type *&d = a_graph.nodes[3];
+  node_type *&e = a_graph.nodes[4];
+  node_type *&f = a_graph.nodes[5];
+  node_type *&g = a_graph.nodes[6];
+  node_type *&h = a_graph.nodes[7];
+  node_type *&i = a_graph.nodes[8];
 
   cout << a_graph << endl;
 
-  a_graph.InsertEdge(a, b, 3);
-  a_graph.InsertEdge(a, c, 7);
-  a_graph.InsertEdge(a, d, 2);
+  edges_json += insert_edge<graph_type>(a_graph, a, b, 3);
+  edges_json += insert_edge<graph_type>(a_graph, a, c, 7);
+  edges_json += insert_edge<graph_type>(a_graph, a, d, 2);
 
-  a_graph.InsertEdge(b, e, 5);
-  a_graph.InsertEdge(b, f, 8);
+  edges_json += insert_edge<graph_type>(a_graph, b, e, 5);
+  edges_json += insert_edge<graph_type>(a_graph, b, f, 8);
 
 
-  a_graph.InsertEdge(e, h, 44);
-  a_graph.InsertEdge(f, c, 55);
+  edges_json += insert_edge<graph_type>(a_graph, e, h, 44);
+  edges_json += insert_edge<graph_type>(a_graph, f, c, 55);
 
-  a_graph.InsertEdge(c, d, 9);
-  a_graph.InsertEdge(c, h, 10);
+  edges_json += insert_edge<graph_type>(a_graph, c, d, 9);
+  edges_json += insert_edge<graph_type>(a_graph, c, h, 10);
 
-  a_graph.InsertEdge(g, h, 2);
-  a_graph.InsertEdge(h, i, 15);
-  a_graph.InsertEdge(g, i, 14);
+  edges_json += insert_edge<graph_type>(a_graph, g, h, 2);
+  edges_json += insert_edge<graph_type>(a_graph, h, i, 15);
+  edges_json += insert_edge<graph_type>(a_graph, g, i, 14, true);
 
+  // a_graph.insert_edge(a, b, 3);
+  // a_graph.insert_edge(a, c, 7);
+  // a_graph.insert_edge(a, d, 2);
+  // a_graph.insert_edge(b, e, 5);
+  // a_graph.insert_edge(b, f, 8);
+  // a_graph.insert_edge(e, h, 44);
+  // a_graph.insert_edge(f, c, 55);
+  // a_graph.insert_edge(c, d, 9);
+  // a_graph.insert_edge(c, h, 10);
+  // a_graph.insert_edge(g, h, 2);
+  // a_graph.insert_edge(h, i, 15);
+  // a_graph.insert_edge(g, i, 14);
+
+
+  my_graph_json += nodes_json + edges_json;
 
   edge_value_type weight{ 0 };
-  cout << a_graph << endl;
+  // cout << a_graph << endl;
 
-  std::vector<node_type *> best_path =
-    // dijkstra<node_value_type, edge_value_type>(a_graph.nodes.front(), a_graph.nodes.back(), weight);
+  std::vector<node_type *> best_path =//
     dijkstra<graph_type>(a_graph.nodes.front(), a_graph.nodes.back(), weight);
 
   // for (auto *node : best_path) { cout << node << "-> " << endl; }
   for (auto *node_in_path : best_path) { cout << node_in_path->value << "->"; }// POSSIBLE
   cout << weight << endl;
 
+  // cout << my_graph_json << endl;
+
   return 0;
 }
-
-// podar
-// count triangles in a graph
-// foldable but checking the value.
+/*
+USE THE FOLLOWING COMMAND IN THE DEBUG CONSOLE TO ALLOW GDB PRINT MORE THAN 200 CHARS
+-exec set print elements 0
+source: https://github.com/hediet/vscode-debug-visualizer/issues/53
+ */
