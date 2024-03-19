@@ -211,7 +211,8 @@ template<typename T> std::ostream &operator<<(std::ostream &os, const list<T> &t
 // template<class T> ostream &operator<<(std::ostream &os, const node<T> *t_node) { return os << t_node->value; }
 
 
-}// namespace fstd
+}
+// namespace fstd
 
 /****************************************************************************
  * IMPLEMENTATION DETAILS

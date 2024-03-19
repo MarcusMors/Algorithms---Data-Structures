@@ -245,7 +245,7 @@ int main()
   using node_type = node<graph_type>;
 
   graph<node_value_type, edge_value_type> a_graph;
-  std::vector<node_value_type> a_node_input{ 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i' };
+  std::vector<node_value_type> a_node_input{ 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k' };
 
   string my_graph_json{ R"({"kind":{"graph":true},)" };
   string nodes_json{ R"("nodes":[)" };
@@ -274,6 +274,8 @@ int main()
   node_type *&g = a_graph.nodes[6];
   node_type *&h = a_graph.nodes[7];
   node_type *&i = a_graph.nodes[8];
+  node_type *&j = a_graph.nodes[9];
+  node_type *&k = a_graph.nodes[10];
 
   cout << a_graph << endl;
 
@@ -293,21 +295,9 @@ int main()
 
   edges_json += insert_edge<graph_type>(a_graph, g, h, 2);
   edges_json += insert_edge<graph_type>(a_graph, h, i, 15);
-  edges_json += insert_edge<graph_type>(a_graph, g, i, 14, true);
+  edges_json += insert_edge<graph_type>(a_graph, g, i, 14);
 
-  // a_graph.insert_edge(a, b, 3);
-  // a_graph.insert_edge(a, c, 7);
-  // a_graph.insert_edge(a, d, 2);
-  // a_graph.insert_edge(b, e, 5);
-  // a_graph.insert_edge(b, f, 8);
-  // a_graph.insert_edge(e, h, 44);
-  // a_graph.insert_edge(f, c, 55);
-  // a_graph.insert_edge(c, d, 9);
-  // a_graph.insert_edge(c, h, 10);
-  // a_graph.insert_edge(g, h, 2);
-  // a_graph.insert_edge(h, i, 15);
-  // a_graph.insert_edge(g, i, 14);
-
+  edges_json += insert_edge<graph_type>(a_graph, j, k, 30, true);
 
   my_graph_json += nodes_json + edges_json;
 
